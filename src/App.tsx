@@ -1,5 +1,5 @@
 import React, { useCallback, useEffect, useRef, useState } from "react";
-import { measureSpring, spring, SpringConfig } from "remotion";
+import { measureSpring, SpringConfig } from "remotion";
 import {
   drawTrajectory,
   LINE_WIDTH,
