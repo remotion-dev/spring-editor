@@ -10,6 +10,7 @@ import {
   PADDING_TOP,
 } from "./draw-trajectory";
 import { getTrajectory } from "./get-trajectory";
+import { useDarkMode } from "./use-dark-mode";
 
 const CANVAS_WIDTH = 800;
 const CANVAS_HEIGHT = 400;
@@ -17,7 +18,7 @@ const CANVAS_HEIGHT = 400;
 const canvasStyle: React.CSSProperties = {
   width: CANVAS_WIDTH,
   height: CANVAS_HEIGHT,
-  backgroundColor: "white",
+  backgroundColor: "var(--background)",
 };
 
 const fps = 60;
@@ -32,6 +33,9 @@ function App() {
     stiffness: 100,
     overshootClamping: false,
   });
+
+  const darkMode = useDarkMode();
+
   const [draggedConfig, setDraggedConfig] = useState<SpringConfig | null>(null);
 
   const onMassChange: React.ChangeEventHandler<HTMLInputElement> = useCallback(
@@ -107,14 +111,23 @@ function App() {
       ? Math.max(...draggedTrajectory)
       : Math.max(...trajectory);
 
+    context.strokeStyle = darkMode ? "rgba(255, 255, 255, 0.05)" : "#eee";
+    context.lineWidth = LINE_WIDTH;
+    context.lineCap = "round";
+
+    // Draw 0 line
+    const zeroHeight = CANVAS_HEIGHT - PADDING_BOTTOM;
+    context.beginPath();
+    context.moveTo(PADDING_LEFT, zeroHeight);
+    context.lineTo(CANVAS_WIDTH - PADDING_RIGHT, zeroHeight);
+    context.stroke();
+    context.closePath();
+
     // Draw 1 line
     const oneHeight =
       (CANVAS_HEIGHT - PADDING_TOP - PADDING_BOTTOM) * (1 - 1 / max) +
       PADDING_TOP;
     context.beginPath();
-    context.lineWidth = LINE_WIDTH;
-    context.lineCap = "round";
-    context.strokeStyle = "rgba(0, 0, 0, 0.1)";
     context.moveTo(PADDING_LEFT, oneHeight);
     context.lineTo(CANVAS_WIDTH - PADDING_RIGHT, oneHeight);
     context.stroke();
@@ -131,6 +144,7 @@ function App() {
       fps,
       renderTime: latestRerender.current,
       lastRenderRef: latestRerender,
+      darkMode,
     });
     if (draggedConfig) {
       drawTrajectory({
@@ -144,9 +158,10 @@ function App() {
         fps,
         renderTime: latestRerender.current,
         lastRenderRef: latestRerender,
+        darkMode,
       });
     }
-  }, [config, draggedConfig, draggedDuration, duration]);
+  }, [config, darkMode, draggedConfig, draggedDuration, duration]);
 
   return (
     <div
@@ -161,7 +176,7 @@ function App() {
     >
       <div
         style={{
-          boxShadow: "0 3px 10px rgba(0, 0, 0, 0.14)",
+          boxShadow: "0 3px 10px var(--shadow-color)",
           display: "flex",
           flexDirection: "row",
           borderRadius: 8,
@@ -225,10 +240,10 @@ function App() {
             checked={config.overshootClamping}
           ></input>
           overshootClamping = {String(config.overshootClamping)} <br></br>
+          <div style={{ flex: 1 }}></div>
           <div>
             Duration: {((draggedDuration ?? duration) / fps).toFixed(2)}sec
           </div>
-          <div style={{ flex: 1 }}></div>
           <button type="button">Copy Remotion</button>
           <button type="button">Copy Reanimated</button>
         </div>

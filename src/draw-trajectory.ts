@@ -4,10 +4,10 @@ import { interpolate, interpolateColors } from "remotion";
 const gradient = ["#42e9f5", "#4290f5"] as const;
 
 export const LINE_WIDTH = 5;
-export const PADDING_LEFT = 5;
-export const PADDING_RIGHT = 5;
-export const PADDING_TOP = 5;
-export const PADDING_BOTTOM = 5;
+export const PADDING_LEFT = 80;
+export const PADDING_RIGHT = 20;
+export const PADDING_TOP = 20;
+export const PADDING_BOTTOM = 20;
 
 export const drawTrajectory = async ({
   context,
@@ -20,6 +20,7 @@ export const drawTrajectory = async ({
   fps,
   renderTime,
   lastRenderRef,
+  darkMode,
 }: {
   primary: boolean;
   context: CanvasRenderingContext2D;
@@ -31,6 +32,7 @@ export const drawTrajectory = async ({
   fps: number;
   renderTime: number;
   lastRenderRef: React.MutableRefObject<number>;
+  darkMode: boolean;
 }) => {
   const intervalBetweenDraw = 1000 / fps;
   const segmentWidth =
@@ -67,7 +69,7 @@ export const drawTrajectory = async ({
     lastX = x;
     lastY = y;
 
-    context.strokeStyle = primary ? color : "#eee";
+    context.strokeStyle = primary ? color : darkMode ? "#333" : "#eee";
     context.lineTo(x, y);
     context.stroke();
     context.closePath();
