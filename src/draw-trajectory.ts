@@ -1,5 +1,5 @@
 import React from "react";
-import { interpolateColors } from "remotion";
+import { interpolate, interpolateColors } from "remotion";
 
 const gradient = ["#42e9f5", "#4290f5"] as const;
 
@@ -72,5 +72,23 @@ export const drawTrajectory = async ({
     context.stroke();
     context.closePath();
     lastDraw = Date.now();
+
+    (
+      document.getElementById("scale") as HTMLElement
+    ).style.transform = `scale(${springTrajectory[i]})`;
+    (
+      document.getElementById("translate") as HTMLElement
+    ).style.transform = `translateY(${interpolate(
+      springTrajectory[i],
+      [0, 1],
+      [100, 0]
+    )}px)`;
+    (
+      document.getElementById("rotate") as HTMLElement
+    ).style.transform = `rotate(${interpolate(
+      springTrajectory[i],
+      [0, 1],
+      [Math.PI * 2, 0]
+    )}rad)`;
   }
 };

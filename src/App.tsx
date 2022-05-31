@@ -1,5 +1,6 @@
 import React, { useCallback, useEffect, useRef, useState } from "react";
 import { measureSpring, SpringConfig } from "remotion";
+import { AnimationPreview } from "./AnimationPreview";
 import {
   drawTrajectory,
   LINE_WIDTH,
@@ -20,6 +21,7 @@ const canvasStyle: React.CSSProperties = {
 };
 
 const fps = 60;
+
 function App() {
   const ref = useRef<HTMLCanvasElement>(null);
   const [initialRender] = useState(() => Date.now());
@@ -100,9 +102,24 @@ function App() {
     const draggedTrajectory = draggedConfig
       ? getTrajectory(draggedDuration ?? duration, fps, draggedConfig)
       : [];
+
     const max = draggedConfig
       ? Math.max(...draggedTrajectory)
       : Math.max(...trajectory);
+
+    // Draw 1 line
+    const oneHeight =
+      (CANVAS_HEIGHT - PADDING_TOP - PADDING_BOTTOM) * (1 - 1 / max) +
+      PADDING_TOP;
+    context.beginPath();
+    context.lineWidth = LINE_WIDTH;
+    context.lineCap = "round";
+    context.strokeStyle = "rgba(0, 0, 0, 0.1)";
+    context.moveTo(PADDING_LEFT, oneHeight);
+    context.lineTo(CANVAS_WIDTH - PADDING_RIGHT, oneHeight);
+    context.stroke();
+    context.closePath();
+
     drawTrajectory({
       springTrajectory: trajectory,
       canvasHeight: CANVAS_HEIGHT,
@@ -129,69 +146,92 @@ function App() {
         lastRenderRef: latestRerender,
       });
     }
-
-    // Draw 1 line
-    const oneHeight =
-      (CANVAS_HEIGHT - PADDING_TOP - PADDING_BOTTOM) * (1 - 1 / max) +
-      PADDING_TOP;
-    context.beginPath();
-    context.lineWidth = LINE_WIDTH;
-    context.lineCap = "round";
-    context.strokeStyle = "rgba(0, 0, 0, 0.1)";
-    context.moveTo(PADDING_LEFT, oneHeight);
-    context.lineTo(CANVAS_WIDTH - PADDING_RIGHT, oneHeight);
-    context.stroke();
-    context.closePath();
   }, [config, draggedConfig, draggedDuration, duration]);
 
   return (
     <div
       style={{
-        margin: 10,
+        display: "flex",
+        justifyContent: "center",
+        alignItems: "center",
+        height: "100%",
+        width: "100%",
+        position: "absolute",
       }}
     >
-      <canvas
-        width={CANVAS_WIDTH}
-        height={CANVAS_HEIGHT}
-        ref={ref}
-        style={canvasStyle}
-      ></canvas>
-      <div>
-        <div>{draggedDuration ?? duration}</div>
-        <input
-          type="range"
-          min={0.3}
-          step={0.1}
-          max={10}
-          value={draggedConfig?.mass ?? config.mass}
-          onChange={onMassChange}
-          onPointerUp={onRelease}
-        ></input>{" "}
-        mass = {draggedConfig?.mass ?? config.mass} <br></br>
-        <input
-          type="range"
-          min={1}
-          max={200}
-          value={draggedConfig?.damping ?? config.damping}
-          onChange={onDampingChange}
-          onPointerUp={onRelease}
-        ></input>{" "}
-        damping = {draggedConfig?.damping ?? config.damping} <br></br>
-        <input
-          type="range"
-          min={1}
-          max={200}
-          value={draggedConfig?.stiffness ?? config.stiffness}
-          onChange={onStiffnessChange}
-          onPointerUp={onRelease}
-        ></input>{" "}
-        stiffness = {draggedConfig?.stiffness ?? config.stiffness} <br></br>
-        <input
-          type="checkbox"
-          onChange={onOvershootClampingChange}
-          checked={config.overshootClamping}
-        ></input>
-        overshootClamping = {String(config.overshootClamping)} <br></br>
+      <div
+        style={{
+          boxShadow: "0 3px 10px rgba(0, 0, 0, 0.14)",
+          display: "flex",
+          flexDirection: "row",
+          borderRadius: 8,
+          overflow: "hidden",
+        }}
+      >
+        <div>
+          <canvas
+            width={CANVAS_WIDTH}
+            height={CANVAS_HEIGHT}
+            ref={ref}
+            style={canvasStyle}
+          ></canvas>
+          <div style={{ display: "flex", flexDirection: "row" }}>
+            <AnimationPreview animation="Scale" id="scale"></AnimationPreview>
+            <AnimationPreview
+              animation="Translate"
+              id="translate"
+            ></AnimationPreview>
+            <AnimationPreview animation="Rotate" id="rotate"></AnimationPreview>
+          </div>
+        </div>
+        <div
+          style={{
+            padding: 16,
+            display: "flex",
+            flexDirection: "column",
+          }}
+        >
+          <input
+            type="range"
+            min={0.3}
+            step={0.1}
+            max={10}
+            value={draggedConfig?.mass ?? config.mass}
+            onChange={onMassChange}
+            onPointerUp={onRelease}
+          ></input>{" "}
+          mass = {draggedConfig?.mass ?? config.mass} <br></br>
+          <input
+            type="range"
+            min={1}
+            max={200}
+            value={draggedConfig?.damping ?? config.damping}
+            onChange={onDampingChange}
+            onPointerUp={onRelease}
+          ></input>{" "}
+          damping = {draggedConfig?.damping ?? config.damping} <br></br>
+          <input
+            type="range"
+            min={1}
+            max={200}
+            value={draggedConfig?.stiffness ?? config.stiffness}
+            onChange={onStiffnessChange}
+            onPointerUp={onRelease}
+          ></input>{" "}
+          stiffness = {draggedConfig?.stiffness ?? config.stiffness} <br></br>
+          <input
+            type="checkbox"
+            onChange={onOvershootClampingChange}
+            checked={config.overshootClamping}
+          ></input>
+          overshootClamping = {String(config.overshootClamping)} <br></br>
+          <div>
+            Duration: {((draggedDuration ?? duration) / fps).toFixed(2)}sec
+          </div>
+          <div style={{ flex: 1 }}></div>
+          <button type="button">Copy Remotion</button>
+          <button type="button">Copy Reanimated</button>
+        </div>
       </div>
     </div>
   );
