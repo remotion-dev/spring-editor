@@ -18,9 +18,6 @@ export const drawTrajectory = async ({
   max,
   animate,
   fps,
-  renderTime,
-  lastRenderRef,
-  darkMode,
 }: {
   primary: boolean;
   context: CanvasRenderingContext2D;
@@ -30,9 +27,6 @@ export const drawTrajectory = async ({
   max: number;
   animate: boolean;
   fps: number;
-  renderTime: number;
-  lastRenderRef: React.MutableRefObject<number>;
-  darkMode: boolean;
 }) => {
   const intervalBetweenDraw = 1000 / fps;
   const segmentWidth =
@@ -43,9 +37,6 @@ export const drawTrajectory = async ({
   let lastY = canvasHeight - PADDING_BOTTOM;
   let lastDraw = Date.now();
   for (let i = 0; i < springTrajectory.length; i++) {
-    if (lastRenderRef.current !== renderTime) {
-      break;
-    }
     const timeSinceLastDraw = Date.now() - lastDraw;
     if (animate) {
       await new Promise((resolve) =>
@@ -69,7 +60,7 @@ export const drawTrajectory = async ({
     lastX = x;
     lastY = y;
 
-    context.strokeStyle = primary ? color : darkMode ? "#333" : "#eee";
+    context.strokeStyle = primary ? color : "#333";
     context.lineTo(x, y);
     context.stroke();
     context.closePath();

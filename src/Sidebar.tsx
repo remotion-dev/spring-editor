@@ -2,6 +2,7 @@ import React from "react";
 import { Slider } from "./components/ui/slider";
 import { Button } from "./components/ui/button";
 import { Checkbox } from "./components/ui/checkbox";
+import { Label } from "@radix-ui/react-label";
 
 export const Sidebar: React.FC<{
   mass: number;
@@ -31,10 +32,10 @@ export const Sidebar: React.FC<{
   return (
     <div
       style={{
-        padding: 16,
+        padding: 30,
         display: "flex",
         flexDirection: "column",
-        width: 350,
+        width: 400,
         height: "100%",
       }}
     >
@@ -64,13 +65,17 @@ export const Sidebar: React.FC<{
       ></Slider>{" "}
       stiffness = {stiffness} <br></br>
       <Checkbox
+        id="overshootClamping"
         onCheckedChange={onOvershootClampingChange}
         checked={overshootClamping}
       ></Checkbox>
-      overshootClamping <br></br>
+      <Label htmlFor="overshootClamping">
+        overshootClamping <br></br>
+      </Label>
       <div style={{ flex: 1 }}></div>
       <div>Duration: {(duration / fps).toFixed(2)}sec</div>
       <Button>Copy Remotion</Button>
+      <div style={{ height: 8 }}></div>
       <Button>Copy Reanimated</Button>
     </div>
   );

@@ -15,15 +15,8 @@ import { Slider } from "./components/ui/slider";
 import { Checkbox } from "./components/ui/checkbox";
 import { Button } from "./components/ui/button";
 import { Sidebar } from "./Sidebar";
-
-const CANVAS_WIDTH = 800;
-const CANVAS_HEIGHT = 400;
-
-const canvasStyle: React.CSSProperties = {
-  width: CANVAS_WIDTH,
-  height: CANVAS_HEIGHT,
-  backgroundColor: "var(--background)",
-};
+import { CANVAS_HEIGHT, CANVAS_WIDTH, Canvas } from "./Canvas";
+import { draw } from "./draw";
 
 const fps = 60;
 
@@ -143,9 +136,6 @@ function App() {
       primary: draggedConfig ? false : true,
       animate: !draggedConfig,
       fps,
-      renderTime: latestRerender.current,
-      lastRenderRef: latestRerender,
-      darkMode,
     });
     if (draggedConfig) {
       drawTrajectory({
@@ -157,12 +147,24 @@ function App() {
         primary: true,
         animate: false,
         fps,
-        renderTime: latestRerender.current,
-        lastRenderRef: latestRerender,
-        darkMode,
       });
     }
   }, [config, darkMode, draggedConfig, draggedDuration, duration]);
+
+  useEffect(() => {
+    if (!ref.current) {
+      return;
+    }
+
+    draw({
+      ref: ref.current,
+      duration: draggedDuration ?? duration,
+      config,
+      draggedConfig,
+      fps,
+      draggedDuration,
+    });
+  }, []);
 
   return (
     <div
@@ -187,13 +189,8 @@ function App() {
           height: "100%",
         }}
       >
-        <div style={{ flex: 1 }}>
-          <canvas
-            width={CANVAS_WIDTH}
-            height={CANVAS_HEIGHT}
-            ref={ref}
-            style={canvasStyle}
-          ></canvas>
+        <div style={{ flex: 1, display: "flex", flexDirection: "column" }}>
+          <Canvas ref={ref}></Canvas>
           <div style={{ display: "flex", flexDirection: "row" }}>
             <AnimationPreview animation="Scale" id="scale"></AnimationPreview>
             <AnimationPreview
