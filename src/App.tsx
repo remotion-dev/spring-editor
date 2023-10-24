@@ -1,37 +1,20 @@
-import React, { useCallback, useEffect, useRef, useState } from "react";
+import { useCallback, useRef, useState } from "react";
 import { measureSpring, SpringConfig } from "remotion";
 import { AnimationPreview } from "./AnimationPreview";
-import {
-  drawTrajectory,
-  LINE_WIDTH,
-  PADDING_BOTTOM,
-  PADDING_LEFT,
-  PADDING_RIGHT,
-  PADDING_TOP,
-} from "./draw-trajectory";
-import { getTrajectory } from "./get-trajectory";
-import { useDarkMode } from "./use-dark-mode";
-import { Slider } from "./components/ui/slider";
-import { Checkbox } from "./components/ui/checkbox";
-import { Button } from "./components/ui/button";
+
 import { Sidebar } from "./Sidebar";
-import { CANVAS_HEIGHT, CANVAS_WIDTH, Canvas } from "./Canvas";
-import { draw } from "./draw";
+import { CanvasWrapper } from "./CanvasWrapper";
 
 const fps = 60;
 
 function App() {
   const ref = useRef<HTMLCanvasElement>(null);
-  const [initialRender] = useState(() => Date.now());
-  const latestRerender = useRef<number>(initialRender);
   const [config, setConfig] = useState<SpringConfig>({
     damping: 10,
     mass: 1,
     stiffness: 100,
     overshootClamping: false,
   });
-
-  const darkMode = useDarkMode();
 
   const [draggedConfig, setDraggedConfig] = useState<SpringConfig | null>(null);
 
@@ -89,82 +72,6 @@ function App() {
         config: draggedConfig,
       })
     : null;
-  useEffect(() => {
-    const context = ref.current?.getContext("2d");
-    if (!context) {
-      return;
-    }
-    latestRerender.current = Date.now();
-    context.clearRect(0, 0, CANVAS_WIDTH, CANVAS_HEIGHT);
-    const trajectory = getTrajectory(draggedDuration ?? duration, fps, config);
-    const draggedTrajectory = draggedConfig
-      ? getTrajectory(draggedDuration ?? duration, fps, draggedConfig)
-      : [];
-
-    const max = draggedConfig
-      ? Math.max(...draggedTrajectory)
-      : Math.max(...trajectory);
-
-    context.strokeStyle = darkMode ? "rgba(255, 255, 255, 0.05)" : "#eee";
-    context.lineWidth = LINE_WIDTH;
-    context.lineCap = "round";
-
-    // Draw 0 line
-    const zeroHeight = CANVAS_HEIGHT - PADDING_BOTTOM;
-    context.beginPath();
-    context.moveTo(PADDING_LEFT, zeroHeight);
-    context.lineTo(CANVAS_WIDTH - PADDING_RIGHT, zeroHeight);
-    context.stroke();
-    context.closePath();
-
-    // Draw 1 line
-    const oneHeight =
-      (CANVAS_HEIGHT - PADDING_TOP - PADDING_BOTTOM) * (1 - 1 / max) +
-      PADDING_TOP;
-    context.beginPath();
-    context.moveTo(PADDING_LEFT, oneHeight);
-    context.lineTo(CANVAS_WIDTH - PADDING_RIGHT, oneHeight);
-    context.stroke();
-    context.closePath();
-
-    drawTrajectory({
-      springTrajectory: trajectory,
-      canvasHeight: CANVAS_HEIGHT,
-      canvasWidth: CANVAS_WIDTH,
-      context,
-      max,
-      primary: draggedConfig ? false : true,
-      animate: !draggedConfig,
-      fps,
-    });
-    if (draggedConfig) {
-      drawTrajectory({
-        springTrajectory: draggedTrajectory,
-        canvasHeight: CANVAS_HEIGHT,
-        canvasWidth: CANVAS_WIDTH,
-        context,
-        max,
-        primary: true,
-        animate: false,
-        fps,
-      });
-    }
-  }, [config, darkMode, draggedConfig, draggedDuration, duration]);
-
-  useEffect(() => {
-    if (!ref.current) {
-      return;
-    }
-
-    draw({
-      ref: ref.current,
-      duration: draggedDuration ?? duration,
-      config,
-      draggedConfig,
-      fps,
-      draggedDuration,
-    });
-  }, []);
 
   return (
     <div
@@ -190,7 +97,14 @@ function App() {
         }}
       >
         <div style={{ flex: 1, display: "flex", flexDirection: "column" }}>
-          <Canvas ref={ref}></Canvas>
+          <CanvasWrapper
+            config={config}
+            draggedConfig={draggedConfig}
+            draggedDuration={draggedDuration}
+            duration={duration}
+            fps={fps}
+            ref={ref}
+          ></CanvasWrapper>
           <div style={{ display: "flex", flexDirection: "row" }}>
             <AnimationPreview animation="Scale" id="scale"></AnimationPreview>
             <AnimationPreview

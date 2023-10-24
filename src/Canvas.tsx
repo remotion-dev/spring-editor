@@ -1,44 +1,55 @@
-import { PlayerInternals } from "@remotion/player";
-import { forwardRef, useMemo, useRef } from "react";
+import React, { useEffect, useMemo } from "react";
+import { draw } from "./draw";
+import { SpringConfig } from "remotion";
 
-export const CANVAS_WIDTH = 800;
-export const CANVAS_HEIGHT = 400;
+const canvasRef = React.createRef<HTMLCanvasElement>();
 
-const CanvasForward: React.ForwardRefRenderFunction<HTMLCanvasElement> = (
-  props,
-  ref
-) => {
-  const outer = useRef<HTMLDivElement>(null);
-
-  const elementSize = PlayerInternals.useElementSize(outer, {
-    shouldApplyCssTransforms: false,
-    triggerOnWindowResize: true,
-  });
-
+export const Canvas: React.FC<{
+  width: number;
+  height: number;
+  draggedConfig: SpringConfig | null;
+  draggedDuration: number | null;
+  duration: number;
+  config: SpringConfig;
+  fps: number;
+}> = ({
+  height,
+  width,
+  draggedConfig,
+  draggedDuration,
+  config,
+  duration,
+  fps,
+}) => {
   const canvasStyle: React.CSSProperties = useMemo(() => {
-    if (!elementSize) {
-      return {};
-    }
-
     return {
-      width: elementSize.width,
-      height: elementSize.height,
+      width,
+      height,
       backgroundColor: "var(--background)",
     };
-  }, []);
+  }, [height, width]);
+
+  useEffect(() => {
+    if (!canvasRef.current) {
+      throw new Error("no canvas");
+    }
+
+    draw({
+      ref: canvasRef.current,
+      duration: draggedDuration ?? duration,
+      config,
+      draggedConfig,
+      fps,
+      draggedDuration,
+    });
+  }, [draggedDuration, duration, config, draggedConfig, fps]);
 
   return (
-    <div style={{ flex: 1 }} ref={outer}>
-      {elementSize ? (
-        <canvas
-          width={elementSize.width}
-          height={elementSize.height}
-          ref={ref}
-          style={canvasStyle}
-        ></canvas>
-      ) : null}
-    </div>
+    <canvas
+      width={width}
+      height={height}
+      ref={canvasRef}
+      style={canvasStyle}
+    ></canvas>
   );
 };
-
-export const Canvas = forwardRef(CanvasForward);

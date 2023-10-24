@@ -1,4 +1,3 @@
-import React from "react";
 import { interpolate, interpolateColors } from "remotion";
 
 const gradient = ["#42e9f5", "#4290f5"] as const;

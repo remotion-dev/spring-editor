@@ -1,5 +1,5 @@
 import { SpringConfig } from "remotion";
-import { CANVAS_HEIGHT, CANVAS_WIDTH } from "./Canvas";
+import { CANVAS_HEIGHT, CANVAS_WIDTH } from "./CanvasWrapper";
 import { getTrajectory } from "./get-trajectory";
 import {
   LINE_WIDTH,
@@ -9,8 +9,6 @@ import {
   PADDING_TOP,
   drawTrajectory,
 } from "./draw-trajectory";
-
-let latestRerender = Date.now();
 
 export const draw = ({
   ref,
@@ -33,7 +31,6 @@ export const draw = ({
     return;
   }
 
-  latestRerender = Date.now();
   context.clearRect(0, 0, CANVAS_WIDTH, CANVAS_HEIGHT);
   const trajectory = getTrajectory(duration, fps, config);
   const draggedTrajectory = draggedConfig
