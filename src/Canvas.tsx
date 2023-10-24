@@ -41,8 +41,10 @@ export const Canvas: React.FC<{
       draggedConfig,
       fps,
       draggedDuration,
+      height,
+      width,
     });
-  }, [draggedDuration, duration, config, draggedConfig, fps]);
+  }, [draggedDuration, duration, config, draggedConfig, fps, width, height]);
 
   return (
     <canvas

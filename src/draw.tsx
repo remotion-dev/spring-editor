@@ -1,5 +1,4 @@
 import { SpringConfig } from "remotion";
-import { CANVAS_HEIGHT, CANVAS_WIDTH } from "./CanvasWrapper";
 import { getTrajectory } from "./get-trajectory";
 import {
   LINE_WIDTH,
@@ -17,6 +16,8 @@ export const draw = ({
   config,
   draggedConfig,
   draggedDuration,
+  height,
+  width,
 }: {
   ref: HTMLCanvasElement;
   duration: number;
@@ -24,6 +25,8 @@ export const draw = ({
   config: SpringConfig;
   draggedConfig: SpringConfig | null;
   draggedDuration: number | null;
+  width: number;
+  height: number;
 }) => {
   const context = ref.getContext("2d");
 
@@ -31,7 +34,7 @@ export const draw = ({
     return;
   }
 
-  context.clearRect(0, 0, CANVAS_WIDTH, CANVAS_HEIGHT);
+  context.clearRect(0, 0, width, height);
   const trajectory = getTrajectory(duration, fps, config);
   const draggedTrajectory = draggedConfig
     ? getTrajectory(draggedDuration ?? duration, fps, draggedConfig)
@@ -46,27 +49,26 @@ export const draw = ({
   context.lineCap = "round";
 
   // Draw 0 line
-  const zeroHeight = CANVAS_HEIGHT - PADDING_BOTTOM;
+  const zeroHeight = height - PADDING_BOTTOM;
   context.beginPath();
   context.moveTo(PADDING_LEFT, zeroHeight);
-  context.lineTo(CANVAS_WIDTH - PADDING_RIGHT, zeroHeight);
+  context.lineTo(width - PADDING_RIGHT, zeroHeight);
   context.stroke();
   context.closePath();
 
   // Draw 1 line
   const oneHeight =
-    (CANVAS_HEIGHT - PADDING_TOP - PADDING_BOTTOM) * (1 - 1 / max) +
-    PADDING_TOP;
+    (height - PADDING_TOP - PADDING_BOTTOM) * (1 - 1 / max) + PADDING_TOP;
   context.beginPath();
   context.moveTo(PADDING_LEFT, oneHeight);
-  context.lineTo(CANVAS_WIDTH - PADDING_RIGHT, oneHeight);
+  context.lineTo(width - PADDING_RIGHT, oneHeight);
   context.stroke();
   context.closePath();
 
   drawTrajectory({
     springTrajectory: trajectory,
-    canvasHeight: CANVAS_HEIGHT,
-    canvasWidth: CANVAS_WIDTH,
+    canvasHeight: height,
+    canvasWidth: width,
     context,
     max,
     primary: draggedConfig ? false : true,
@@ -76,8 +78,8 @@ export const draw = ({
   if (draggedConfig) {
     drawTrajectory({
       springTrajectory: draggedTrajectory,
-      canvasHeight: CANVAS_HEIGHT,
-      canvasWidth: CANVAS_WIDTH,
+      canvasHeight: height,
+      canvasWidth: width,
       context,
       max,
       primary: true,

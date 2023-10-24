@@ -1,8 +1,9 @@
 import React from "react";
 import { Slider } from "./components/ui/slider";
 import { Button } from "./components/ui/button";
-import { Checkbox } from "./components/ui/checkbox";
-import { Label } from "@radix-ui/react-label";
+
+import { SliderLabel } from "./SliderLabel";
+import { CheckboxWithLabel } from "./Checkbox";
 
 export const Sidebar: React.FC<{
   mass: number;
@@ -37,6 +38,7 @@ export const Sidebar: React.FC<{
         flexDirection: "column",
         width: 400,
         height: "100%",
+        borderLeft: "1px solid black",
       }}
     >
       <Slider
@@ -47,7 +49,7 @@ export const Sidebar: React.FC<{
         onValueChange={onMassChange}
         onPointerUp={onRelease}
       ></Slider>
-      mass = {mass} <br></br>
+      <SliderLabel label="mass" value={mass}></SliderLabel>
       <Slider
         min={1}
         max={200}
@@ -55,23 +57,20 @@ export const Sidebar: React.FC<{
         onValueChange={onDampingChange}
         onPointerUp={onRelease}
       ></Slider>
-      damping = {damping} <br></br>
+      <SliderLabel label="damping" value={damping}></SliderLabel>
       <Slider
         min={1}
         max={200}
         value={[stiffness]}
         onValueChange={onStiffnessChange}
         onPointerUp={onRelease}
-      ></Slider>{" "}
-      stiffness = {stiffness} <br></br>
-      <Checkbox
+      ></Slider>
+      <SliderLabel label="stiffness" value={stiffness}></SliderLabel>
+      <CheckboxWithLabel
+        checked={overshootClamping}
         id="overshootClamping"
         onCheckedChange={onOvershootClampingChange}
-        checked={overshootClamping}
-      ></Checkbox>
-      <Label htmlFor="overshootClamping">
-        overshootClamping <br></br>
-      </Label>
+      ></CheckboxWithLabel>
       <div style={{ flex: 1 }}></div>
       <div>Duration: {(duration / fps).toFixed(2)}sec</div>
       <Button>Copy Remotion</Button>

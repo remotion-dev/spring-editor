@@ -3,9 +3,6 @@ import { forwardRef, useRef } from "react";
 import { Canvas } from "./Canvas";
 import { SpringConfig } from "remotion";
 
-export const CANVAS_WIDTH = 800;
-export const CANVAS_HEIGHT = 400;
-
 const CanvasWrapperForward: React.ForwardRefRenderFunction<
   HTMLCanvasElement,
   {
