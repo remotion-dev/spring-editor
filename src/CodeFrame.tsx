@@ -2,13 +2,21 @@ import React, { useEffect, useMemo, useState } from "react";
 import { codeToHtml } from "shikiji";
 import { DEFAULT_DAMPING, DEFAULT_MASS, DEFAULT_STIFFNESS } from "./defaults";
 
-export const CodeFrame: React.FC<{
+type Props = {
   damping: number;
   mass: number;
   stiffness: number;
   overshotClamping: boolean;
   reverse: boolean;
-}> = ({ damping, mass, stiffness, overshotClamping, reverse }) => {
+};
+
+const CodeFrame: React.FC<Props> = ({
+  damping,
+  mass,
+  stiffness,
+  overshotClamping,
+  reverse,
+}) => {
   const [h, setH] = useState<string | null>(null);
 
   const code = useMemo(() => {
@@ -52,16 +60,35 @@ export const CodeFrame: React.FC<{
   }
 
   return (
-    <div
-      style={{
-        backgroundColor: "#24292E",
-        paddingTop: 14,
-        paddingBottom: 14,
-        paddingLeft: 20,
-        borderRadius: 8,
-      }}
-    >
-      <div dangerouslySetInnerHTML={{ __html: h }}></div>
+    <div>
+      <div
+        style={{
+          backgroundColor: "#24292E",
+          paddingTop: 14,
+          paddingBottom: 14,
+          paddingLeft: 20,
+          borderRadius: 8,
+        }}
+      >
+        <div dangerouslySetInnerHTML={{ __html: h }}></div>
+      </div>
     </div>
   );
 };
+
+import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
+
+export function CodeFrameTabs(props: Props) {
+  return (
+    <Tabs defaultValue="account">
+      <TabsList className="grid w-full grid-cols-2">
+        <TabsTrigger value="account">Remotion</TabsTrigger>
+        <TabsTrigger value="password">Reanimated</TabsTrigger>
+      </TabsList>
+      <TabsContent value="account">
+        <CodeFrame {...props}></CodeFrame>
+      </TabsContent>
+      <TabsContent value="password">coming soon</TabsContent>
+    </Tabs>
+  );
+}
