@@ -4,6 +4,15 @@ import { Button } from "./components/ui/button";
 
 import { SliderLabel } from "./SliderLabel";
 import { CheckboxWithLabel } from "./Checkbox";
+import { Spacing } from "./Spacing";
+
+const row: React.CSSProperties = {
+  display: "flex",
+  flexDirection: "row",
+  fontFamily: "GTPlanar",
+
+  alignItems: "center",
+};
 
 export const Sidebar: React.FC<{
   mass: number;
@@ -17,6 +26,8 @@ export const Sidebar: React.FC<{
   onOvershootClampingChange: (checked: boolean) => void;
   duration: number;
   fps: number;
+  reverse: boolean;
+  onReverseChange: (checked: boolean) => void;
 }> = ({
   mass,
   onDampingChange,
@@ -29,6 +40,8 @@ export const Sidebar: React.FC<{
   duration,
   fps,
   onOvershootClampingChange,
+  onReverseChange,
+  reverse,
 }) => {
   return (
     <div
@@ -71,8 +84,23 @@ export const Sidebar: React.FC<{
         id="overshootClamping"
         onCheckedChange={onOvershootClampingChange}
       ></CheckboxWithLabel>
+      <CheckboxWithLabel
+        checked={reverse}
+        id="reverse"
+        onCheckedChange={onReverseChange}
+      ></CheckboxWithLabel>
       <div style={{ flex: 1 }}></div>
-      <div>Duration: {(duration / fps).toFixed(2)}sec</div>
+      <div style={row}>
+        <svg height="1em" viewBox="0 0 512 512">
+          <path
+            fill="white"
+            d="M464 256A208 208 0 1 1 48 256a208 208 0 1 1 416 0zM0 256a256 256 0 1 0 512 0A256 256 0 1 0 0 256zM232 120V256c0 8 4 15.5 10.7 20l96 64c11 7.4 25.9 4.4 33.3-6.7s4.4-25.9-6.7-33.3L280 243.2V120c0-13.3-10.7-24-24-24s-24 10.7-24 24z"
+          />
+        </svg>
+        <Spacing x={1}></Spacing>
+        {(duration / fps).toFixed(2)}sec
+      </div>
+      <Spacing y={2}></Spacing>
       <Button>Copy Remotion</Button>
       <div style={{ height: 8 }}></div>
       <Button>Copy Reanimated</Button>

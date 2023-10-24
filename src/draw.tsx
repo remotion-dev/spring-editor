@@ -1,4 +1,3 @@
-import { SpringConfig } from "remotion";
 import { getTrajectory } from "./get-trajectory";
 import {
   LINE_WIDTH,
@@ -8,6 +7,7 @@ import {
   PADDING_TOP,
   drawTrajectory,
 } from "./draw-trajectory";
+import { DraggedConfig } from "./App";
 
 export const draw = ({
   ref,
@@ -22,8 +22,8 @@ export const draw = ({
   ref: HTMLCanvasElement;
   duration: number;
   fps: number;
-  config: SpringConfig;
-  draggedConfig: SpringConfig | null;
+  config: DraggedConfig;
+  draggedConfig: DraggedConfig | null;
   draggedDuration: number | null;
   width: number;
   height: number;

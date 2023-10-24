@@ -7,16 +7,27 @@ import { CanvasWrapper } from "./CanvasWrapper";
 
 const fps = 60;
 
+export type DraggedConfig = SpringConfig & {
+  reverse: boolean;
+};
+
 function App() {
   const ref = useRef<HTMLCanvasElement>(null);
-  const [config, setConfig] = useState<SpringConfig>({
+  const [config, setConfig] = useState<
+    SpringConfig & {
+      reverse: boolean;
+    }
+  >({
     damping: 10,
     mass: 1,
     stiffness: 100,
     overshootClamping: false,
+    reverse: false,
   });
 
-  const [draggedConfig, setDraggedConfig] = useState<SpringConfig | null>(null);
+  const [draggedConfig, setDraggedConfig] = useState<DraggedConfig | null>(
+    null
+  );
 
   const onMassChange = useCallback(
     (e: [number]) => {
@@ -53,9 +64,23 @@ function App() {
     [config]
   );
 
+  const onReverseChange = useCallback(
+    (checked: boolean) => {
+      setDraggedConfig({
+        ...config,
+        reverse: checked,
+      });
+      setConfig({
+        ...config,
+        reverse: checked,
+      });
+    },
+    [config]
+  );
+
   const onRelease = useCallback(() => {
     if (draggedConfig) {
-      setConfig(draggedConfig as SpringConfig);
+      setConfig(draggedConfig as DraggedConfig);
     }
     setDraggedConfig(null);
   }, [draggedConfig]);
@@ -126,6 +151,8 @@ function App() {
           duration={draggedDuration ?? duration}
           fps={fps}
           onOvershootClampingChange={onOvershootClampingChange}
+          reverse={config.reverse}
+          onReverseChange={onReverseChange}
         ></Sidebar>
       </div>
     </div>

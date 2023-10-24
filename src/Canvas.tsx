@@ -1,16 +1,16 @@
 import React, { useEffect, useMemo } from "react";
 import { draw } from "./draw";
-import { SpringConfig } from "remotion";
+import { DraggedConfig } from "./App";
 
 const canvasRef = React.createRef<HTMLCanvasElement>();
 
 export const Canvas: React.FC<{
   width: number;
   height: number;
-  draggedConfig: SpringConfig | null;
+  draggedConfig: DraggedConfig | null;
   draggedDuration: number | null;
   duration: number;
-  config: SpringConfig;
+  config: DraggedConfig;
   fps: number;
 }> = ({
   height,

@@ -8,6 +8,28 @@ export const PADDING_RIGHT = 20;
 export const PADDING_TOP = 20;
 export const PADDING_BOTTOM = 20;
 
+const getX = ({ i, segmentWidth }: { i: number; segmentWidth: number }) => {
+  return segmentWidth * i + PADDING_LEFT;
+};
+
+const getY = ({
+  canvasHeight,
+  i,
+  max,
+  springTrajectory,
+}: {
+  canvasHeight: number;
+  i: number;
+  max: number;
+  springTrajectory: number[];
+}) => {
+  return (
+    (canvasHeight - PADDING_TOP - PADDING_BOTTOM) *
+      (1 - springTrajectory[i] / max) +
+    PADDING_TOP
+  );
+};
+
 export const drawTrajectory = async ({
   context,
   canvasHeight,
@@ -32,8 +54,8 @@ export const drawTrajectory = async ({
     (canvasWidth - PADDING_LEFT - PADDING_RIGHT) /
     (springTrajectory.length - 1);
 
-  let lastX = PADDING_LEFT;
-  let lastY = canvasHeight - PADDING_BOTTOM;
+  let lastX = getX({ i: 0, segmentWidth });
+  let lastY = getY({ i: 0, canvasHeight, max, springTrajectory });
   let lastDraw = Date.now();
   for (let i = 0; i < springTrajectory.length; i++) {
     const timeSinceLastDraw = Date.now() - lastDraw;
@@ -51,11 +73,9 @@ export const drawTrajectory = async ({
       [0, springTrajectory.length - 1],
       gradient
     );
-    const x = segmentWidth * i + PADDING_LEFT;
-    const y =
-      (canvasHeight - PADDING_TOP - PADDING_BOTTOM) *
-        (1 - springTrajectory[i] / max) +
-      PADDING_TOP;
+    const x = getX({ i, segmentWidth });
+    const y = getY({ canvasHeight, i, max, springTrajectory });
+
     lastX = x;
     lastY = y;
 

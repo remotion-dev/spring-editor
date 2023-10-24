@@ -25,7 +25,7 @@ export const CheckboxWithLabel: React.FC<{
       ></Checkbox>
       <Spacing x={1}></Spacing>
       <Label htmlFor={id}>
-        overshootClamping <br></br>
+        {id} <br></br>
       </Label>
     </div>
   );

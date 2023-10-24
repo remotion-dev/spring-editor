@@ -1,15 +1,15 @@
 import { PlayerInternals } from "@remotion/player";
 import { forwardRef, useRef } from "react";
 import { Canvas } from "./Canvas";
-import { SpringConfig } from "remotion";
+import { DraggedConfig } from "./App";
 
 const CanvasWrapperForward: React.ForwardRefRenderFunction<
   HTMLCanvasElement,
   {
-    draggedConfig: SpringConfig | null;
+    draggedConfig: DraggedConfig | null;
     draggedDuration: number | null;
     duration: number;
-    config: SpringConfig;
+    config: DraggedConfig;
     fps: number;
   }
 > = ({ config, draggedConfig, draggedDuration, duration, fps }, ref) => {
