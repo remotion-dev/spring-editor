@@ -23,8 +23,8 @@ export const Canvas: React.FC<{
 }) => {
   const canvasStyle: React.CSSProperties = useMemo(() => {
     return {
-      width,
-      height,
+      width: "100%",
+      height: "100%",
       backgroundColor: "var(--background)",
     };
   }, [height, width]);
