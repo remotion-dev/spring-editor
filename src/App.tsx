@@ -14,6 +14,7 @@ import { useDarkMode } from "./use-dark-mode";
 import { Slider } from "./components/ui/slider";
 import { Checkbox } from "./components/ui/checkbox";
 import { Button } from "./components/ui/button";
+import { Sidebar } from "./Sidebar";
 
 const CANVAS_WIDTH = 800;
 const CANVAS_HEIGHT = 400;
@@ -201,51 +202,19 @@ function App() {
             <AnimationPreview animation="Rotate" id="rotate"></AnimationPreview>
           </div>
         </div>
-        <div
-          style={{
-            padding: 16,
-            display: "flex",
-            flexDirection: "column",
-            width: 350,
-          }}
-        >
-          <Slider
-            value={[draggedConfig?.mass ?? config.mass]}
-            min={0.3}
-            step={0.1}
-            max={10}
-            onValueChange={onMassChange}
-            onPointerUp={onRelease}
-          ></Slider>
-          mass = {draggedConfig?.mass ?? config.mass} <br></br>
-          <Slider
-            min={1}
-            max={200}
-            value={[draggedConfig?.damping ?? config.damping]}
-            onValueChange={onDampingChange}
-            onPointerUp={onRelease}
-          ></Slider>
-          damping = {draggedConfig?.damping ?? config.damping} <br></br>
-          <Slider
-            min={1}
-            max={200}
-            value={[draggedConfig?.stiffness ?? config.stiffness]}
-            onValueChange={onStiffnessChange}
-            onPointerUp={onRelease}
-          ></Slider>{" "}
-          stiffness = {draggedConfig?.stiffness ?? config.stiffness} <br></br>
-          <Checkbox
-            onCheckedChange={onOvershootClampingChange}
-            checked={config.overshootClamping}
-          ></Checkbox>
-          overshootClamping <br></br>
-          <div style={{ flex: 1 }}></div>
-          <div>
-            Duration: {((draggedDuration ?? duration) / fps).toFixed(2)}sec
-          </div>
-          <Button>Copy Remotion</Button>
-          <Button>Copy Reanimated</Button>
-        </div>
+        <Sidebar
+          mass={draggedConfig?.mass ?? config.mass}
+          damping={draggedConfig?.damping ?? config.damping}
+          stiffness={draggedConfig?.stiffness ?? config.stiffness}
+          onMassChange={onMassChange}
+          onDampingChange={onDampingChange}
+          onStiffnessChange={onStiffnessChange}
+          onRelease={onRelease}
+          overshootClamping={config.overshootClamping}
+          duration={draggedDuration ?? duration}
+          fps={fps}
+          onOvershootClampingChange={onOvershootClampingChange}
+        ></Sidebar>
       </div>
     </div>
   );
