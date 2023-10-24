@@ -11,6 +11,7 @@ import {
 } from "./draw-trajectory";
 import { getTrajectory } from "./get-trajectory";
 import { useDarkMode } from "./use-dark-mode";
+import { Slider } from "./components/ui/slider";
 
 const CANVAS_WIDTH = 800;
 const CANVAS_HEIGHT = 400;
@@ -38,28 +39,26 @@ function App() {
 
   const [draggedConfig, setDraggedConfig] = useState<SpringConfig | null>(null);
 
-  const onMassChange: React.ChangeEventHandler<HTMLInputElement> = useCallback(
-    (e) => {
-      setDraggedConfig({ ...config, mass: Number(e.target.value) });
+  const onMassChange = useCallback(
+    (e: [number]) => {
+      setDraggedConfig({ ...config, mass: e[0] });
     },
     [config]
   );
 
-  const onDampingChange: React.ChangeEventHandler<HTMLInputElement> =
-    useCallback(
-      (e) => {
-        setDraggedConfig({ ...config, damping: Number(e.target.value) });
-      },
-      [config]
-    );
+  const onDampingChange = useCallback(
+    (e: number[]) => {
+      setDraggedConfig({ ...config, damping: e[0] });
+    },
+    [config]
+  );
 
-  const onStiffnessChange: React.ChangeEventHandler<HTMLInputElement> =
-    useCallback(
-      (e) => {
-        setDraggedConfig({ ...config, stiffness: Number(e.target.value) });
-      },
-      [config]
-    );
+  const onStiffnessChange = useCallback(
+    (e: number[]) => {
+      setDraggedConfig({ ...config, stiffness: e[0] });
+    },
+    [config]
+  );
 
   const onOvershootClampingChange: React.ChangeEventHandler<HTMLInputElement> =
     useCallback(
@@ -206,33 +205,30 @@ function App() {
             flexDirection: "column",
           }}
         >
-          <input
-            type="range"
+          <Slider
+            value={[draggedConfig?.mass ?? config.mass]}
             min={0.3}
             step={0.1}
             max={10}
-            value={draggedConfig?.mass ?? config.mass}
-            onChange={onMassChange}
+            onValueChange={onMassChange}
             onPointerUp={onRelease}
-          ></input>{" "}
+          ></Slider>
           mass = {draggedConfig?.mass ?? config.mass} <br></br>
-          <input
-            type="range"
+          <Slider
             min={1}
             max={200}
-            value={draggedConfig?.damping ?? config.damping}
-            onChange={onDampingChange}
+            value={[draggedConfig?.damping ?? config.damping]}
+            onValueChange={onDampingChange}
             onPointerUp={onRelease}
-          ></input>{" "}
+          ></Slider>
           damping = {draggedConfig?.damping ?? config.damping} <br></br>
-          <input
-            type="range"
+          <Slider
             min={1}
             max={200}
-            value={draggedConfig?.stiffness ?? config.stiffness}
-            onChange={onStiffnessChange}
+            value={[draggedConfig?.stiffness ?? config.stiffness]}
+            onValueChange={onStiffnessChange}
             onPointerUp={onRelease}
-          ></input>{" "}
+          ></Slider>{" "}
           stiffness = {draggedConfig?.stiffness ?? config.stiffness} <br></br>
           <input
             type="checkbox"
