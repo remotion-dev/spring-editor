@@ -12,6 +12,8 @@ import {
 import { getTrajectory } from "./get-trajectory";
 import { useDarkMode } from "./use-dark-mode";
 import { Slider } from "./components/ui/slider";
+import { Checkbox } from "./components/ui/checkbox";
+import { Button } from "./components/ui/button";
 
 const CANVAS_WIDTH = 800;
 const CANVAS_HEIGHT = 400;
@@ -60,20 +62,19 @@ function App() {
     [config]
   );
 
-  const onOvershootClampingChange: React.ChangeEventHandler<HTMLInputElement> =
-    useCallback(
-      (e) => {
-        setDraggedConfig({
-          ...config,
-          overshootClamping: e.target.checked,
-        });
-        setConfig({
-          ...config,
-          overshootClamping: e.target.checked,
-        });
-      },
-      [config]
-    );
+  const onOvershootClampingChange = useCallback(
+    (checked: boolean) => {
+      setDraggedConfig({
+        ...config,
+        overshootClamping: checked,
+      });
+      setConfig({
+        ...config,
+        overshootClamping: checked,
+      });
+    },
+    [config]
+  );
 
   const onRelease = useCallback(() => {
     if (draggedConfig) {
@@ -171,6 +172,7 @@ function App() {
         height: "100%",
         width: "100%",
         position: "absolute",
+        flexDirection: "row",
       }}
     >
       <div
@@ -180,9 +182,10 @@ function App() {
           flexDirection: "row",
           borderRadius: 8,
           overflow: "hidden",
+          flex: 1,
         }}
       >
-        <div>
+        <div style={{ flex: 1 }}>
           <canvas
             width={CANVAS_WIDTH}
             height={CANVAS_HEIGHT}
@@ -203,6 +206,7 @@ function App() {
             padding: 16,
             display: "flex",
             flexDirection: "column",
+            width: 350,
           }}
         >
           <Slider
@@ -230,18 +234,17 @@ function App() {
             onPointerUp={onRelease}
           ></Slider>{" "}
           stiffness = {draggedConfig?.stiffness ?? config.stiffness} <br></br>
-          <input
-            type="checkbox"
-            onChange={onOvershootClampingChange}
+          <Checkbox
+            onCheckedChange={onOvershootClampingChange}
             checked={config.overshootClamping}
-          ></input>
-          overshootClamping = {String(config.overshootClamping)} <br></br>
+          ></Checkbox>
+          overshootClamping <br></br>
           <div style={{ flex: 1 }}></div>
           <div>
             Duration: {((draggedDuration ?? duration) / fps).toFixed(2)}sec
           </div>
-          <button type="button">Copy Remotion</button>
-          <button type="button">Copy Reanimated</button>
+          <Button>Copy Remotion</Button>
+          <Button>Copy Reanimated</Button>
         </div>
       </div>
     </div>
