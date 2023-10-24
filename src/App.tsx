@@ -4,6 +4,7 @@ import { AnimationPreview } from "./AnimationPreview";
 
 import { Sidebar } from "./Sidebar";
 import { CanvasWrapper } from "./CanvasWrapper";
+import { DEFAULT_DAMPING, DEFAULT_MASS, DEFAULT_STIFFNESS } from "./defaults";
 
 const fps = 60;
 
@@ -18,9 +19,9 @@ function App() {
       reverse: boolean;
     }
   >({
-    damping: 10,
-    mass: 1,
-    stiffness: 100,
+    damping: DEFAULT_DAMPING,
+    mass: DEFAULT_MASS,
+    stiffness: DEFAULT_STIFFNESS,
     overshootClamping: false,
     reverse: false,
   });

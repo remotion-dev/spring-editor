@@ -5,6 +5,7 @@ import { Button } from "./components/ui/button";
 import { SliderLabel } from "./SliderLabel";
 import { CheckboxWithLabel } from "./Checkbox";
 import { Spacing } from "./Spacing";
+import { CodeFrame } from "./CodeFrame";
 
 const row: React.CSSProperties = {
   display: "flex",
@@ -100,6 +101,14 @@ export const Sidebar: React.FC<{
         <Spacing x={1}></Spacing>
         {(duration / fps).toFixed(2)}sec
       </div>
+      <Spacing y={2}></Spacing>
+      <CodeFrame
+        damping={damping}
+        mass={mass}
+        stiffness={stiffness}
+        overshotClamping={overshootClamping}
+        reverse={reverse}
+      ></CodeFrame>
       <Spacing y={2}></Spacing>
       <Button>Copy Remotion</Button>
       <div style={{ height: 8 }}></div>
