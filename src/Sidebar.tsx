@@ -35,6 +35,7 @@ export const Sidebar: React.FC<{
         display: "flex",
         flexDirection: "column",
         width: 350,
+        height: "100%",
       }}
     >
       <Slider
