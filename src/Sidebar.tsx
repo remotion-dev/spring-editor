@@ -52,7 +52,7 @@ export const Sidebar: React.FC<{
         flexDirection: "column",
         width: 400,
         height: "100%",
-        borderLeft: "1px solid black",
+        borderLeft: "1px solid #242424",
       }}
     >
       <Slider

@@ -5,6 +5,7 @@ import { AnimationPreview } from "./AnimationPreview";
 import { Sidebar } from "./Sidebar";
 import { CanvasWrapper } from "./CanvasWrapper";
 import { DEFAULT_DAMPING, DEFAULT_MASS, DEFAULT_STIFFNESS } from "./defaults";
+import { Header } from "./Header";
 
 const fps = 60;
 
@@ -108,9 +109,10 @@ function App() {
         height: "100%",
         width: "100%",
         position: "absolute",
-        flexDirection: "row",
+        flexDirection: "column",
       }}
     >
+      <Header></Header>{" "}
       <div
         style={{
           boxShadow: "0 3px 10px var(--shadow-color)",
@@ -118,8 +120,8 @@ function App() {
           flexDirection: "row",
           borderRadius: 8,
           overflow: "hidden",
+          width: "100%",
           flex: 1,
-          height: "100%",
         }}
       >
         <div style={{ flex: 1, display: "flex", flexDirection: "column" }}>
