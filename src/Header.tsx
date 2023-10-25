@@ -14,6 +14,7 @@ export const Header: React.FC = () => {
         borderBottom: "1px solid #242424",
         alignItems: "center",
         paddingLeft: 20,
+        paddingRight: 18,
       }}
     >
       <div style={{ fontSize: 20 }}>Spring editor</div>
