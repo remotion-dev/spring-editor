@@ -112,7 +112,7 @@ function App() {
         flexDirection: "column",
       }}
     >
-      <Header></Header>{" "}
+      <Header></Header>
       <div
         id="app"
         style={{
