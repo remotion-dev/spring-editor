@@ -93,23 +93,25 @@ export const drawTrajectory = ({
       context.closePath();
       lastDraw = Date.now();
 
-      (
-        document.getElementById("scale") as HTMLElement
-      ).style.transform = `scale(${springTrajectory[i]})`;
-      (
-        document.getElementById("translate") as HTMLElement
-      ).style.transform = `translateY(${interpolate(
-        springTrajectory[i],
-        [0, 1],
-        [100, 0]
-      )}px)`;
-      (
-        document.getElementById("rotate") as HTMLElement
-      ).style.transform = `rotate(${interpolate(
-        springTrajectory[i],
-        [0, 1],
-        [Math.PI * 2, 0]
-      )}rad)`;
+      if (animate) {
+        (
+          document.getElementById("scale") as HTMLElement
+        ).style.transform = `scale(${springTrajectory[i]})`;
+        (
+          document.getElementById("translate") as HTMLElement
+        ).style.transform = `translateY(${interpolate(
+          springTrajectory[i],
+          [0, 1],
+          [100, 0]
+        )}px)`;
+        (
+          document.getElementById("rotate") as HTMLElement
+        ).style.transform = `rotate(${interpolate(
+          springTrajectory[i],
+          [0, 1],
+          [Math.PI * 2, 0]
+        )}rad)`;
+      }
     }
   };
 
