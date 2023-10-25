@@ -8,8 +8,8 @@ export const AnimationPreview: React.FC<{
     <div style={{ textAlign: "center", paddingBottom: 20 }}>
       <div
         style={{
-          height: 100,
-          width: 100,
+          height: 65,
+          width: 80,
           display: "flex",
           justifyContent: "center",
           alignItems: "center",
@@ -18,15 +18,15 @@ export const AnimationPreview: React.FC<{
         <div
           id={id}
           style={{
-            height: 70,
-            width: 70,
-            backgroundColor: "#0b84f3",
+            height: 50,
+            width: 50,
+            backgroundColor: "white",
+            borderRadius: 10,
           }}
         />
       </div>
       <div
         style={{
-          textTransform: "uppercase",
           fontSize: 13,
         }}
       >
