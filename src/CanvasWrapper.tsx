@@ -20,7 +20,13 @@ export const CanvasWrapper: React.FC<{
   return (
     <div
       ref={outer}
-      style={{ flex: 1, overflow: "hidden", width: "100%", height: "100%" }}
+      style={{
+        flex: 1,
+        overflow: "hidden",
+        width: "100%",
+        height: "100%",
+        position: "relative",
+      }}
     >
       {elementSize ? (
         <Canvas

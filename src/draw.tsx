@@ -8,6 +8,7 @@ import {
   drawTrajectory,
 } from "./draw-trajectory";
 import { DraggedConfig } from "./App";
+import { measureText } from "@remotion/layout-utils";
 
 export let stopDrawing = () => {};
 
@@ -20,6 +21,7 @@ export const draw = ({
   draggedDuration,
   height,
   width,
+  labelText,
 }: {
   ref: HTMLCanvasElement;
   duration: number;
@@ -29,6 +31,7 @@ export const draw = ({
   draggedDuration: number | null;
   width: number;
   height: number;
+  labelText: string;
 }) => {
   const context = ref.getContext("2d");
 
@@ -54,7 +57,20 @@ export const draw = ({
   const zeroHeight = height - PADDING_BOTTOM;
   context.beginPath();
   context.moveTo(PADDING_LEFT, zeroHeight);
-  context.lineTo(width - PADDING_RIGHT, zeroHeight);
+  context.lineTo(
+    width -
+      PADDING_RIGHT -
+      measureText({
+        fontFamily: "GTPlanar",
+        fontSize: 15,
+        text: labelText,
+        fontWeight: "medium",
+        letterSpacing: undefined,
+      }).width -
+      23 -
+      16,
+    zeroHeight
+  );
   context.stroke();
   context.closePath();
 

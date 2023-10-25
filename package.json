@@ -9,6 +9,7 @@
     "@radix-ui/react-slot": "^1.0.2",
     "@radix-ui/react-tabs": "^1.0.4",
     "@remotion/eslint-config": "4.0.54",
+    "@remotion/layout-utils": "^4.0.56",
     "@remotion/player": "4.0.54",
     "@types/node": "^16.7.6",
     "@types/react": "18.2.31",

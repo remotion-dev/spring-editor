@@ -1,4 +1,4 @@
-import { useCallback, useRef, useState } from "react";
+import { useCallback, useState } from "react";
 import { measureSpring, SpringConfig } from "remotion";
 import { AnimationPreview } from "./AnimationPreview";
 
@@ -142,8 +142,6 @@ function App() {
           damping={draggedConfig?.damping ?? config.damping}
           stiffness={draggedConfig?.stiffness ?? config.stiffness}
           overshootClamping={config.overshootClamping}
-          duration={draggedDuration ?? duration}
-          fps={fps}
           reverse={config.reverse}
           onMassChange={onMassChange}
           onDampingChange={onDampingChange}
