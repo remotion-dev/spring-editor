@@ -22,7 +22,7 @@ export const AnimationPreview: React.FC<{
             width: 70,
             backgroundColor: "#0b84f3",
           }}
-        ></div>
+        />
       </div>
       <div
         style={{

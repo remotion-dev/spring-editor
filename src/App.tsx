@@ -14,7 +14,6 @@ export type DraggedConfig = SpringConfig & {
 };
 
 function App() {
-  const ref = useRef<HTMLCanvasElement>(null);
   const [config, setConfig] = useState<
     SpringConfig & {
       reverse: boolean;
@@ -90,7 +89,7 @@ function App() {
   const duration = measureSpring({
     fps,
     threshold: 0.001,
-    config: config,
+    config,
   });
   const draggedDuration = draggedConfig
     ? measureSpring({
@@ -112,7 +111,7 @@ function App() {
         flexDirection: "column",
       }}
     >
-      <Header></Header>
+      <Header />
       <div
         id="app"
         style={{
@@ -131,32 +130,28 @@ function App() {
             draggedDuration={draggedDuration}
             duration={duration}
             fps={fps}
-            ref={ref}
-          ></CanvasWrapper>
+          />
           <div id="animation-preview">
-            <AnimationPreview animation="Scale" id="scale"></AnimationPreview>
-            <AnimationPreview
-              animation="Translate"
-              id="translate"
-            ></AnimationPreview>
-            <AnimationPreview animation="Rotate" id="rotate"></AnimationPreview>
+            <AnimationPreview animation="Scale" id="scale" />
+            <AnimationPreview animation="Translate" id="translate" />
+            <AnimationPreview animation="Rotate" id="rotate" />
           </div>
         </div>
         <Sidebar
           mass={draggedConfig?.mass ?? config.mass}
           damping={draggedConfig?.damping ?? config.damping}
           stiffness={draggedConfig?.stiffness ?? config.stiffness}
+          overshootClamping={config.overshootClamping}
+          duration={draggedDuration ?? duration}
+          fps={fps}
+          reverse={config.reverse}
           onMassChange={onMassChange}
           onDampingChange={onDampingChange}
           onStiffnessChange={onStiffnessChange}
           onRelease={onRelease}
-          overshootClamping={config.overshootClamping}
-          duration={draggedDuration ?? duration}
-          fps={fps}
           onOvershootClampingChange={onOvershootClampingChange}
-          reverse={config.reverse}
           onReverseChange={onReverseChange}
-        ></Sidebar>
+        />
       </div>
     </div>
   );

@@ -17,9 +17,13 @@ export const Header: React.FC = () => {
       }}
     >
       <div style={{ fontSize: 20 }}>Spring editor</div>
-      <div style={{ flex: 1 }}></div>
+      <div style={{ flex: 1 }} />
       <a href="https://remotion.dev" target="_blank">
-        <Img style={{ height: 60 }} src="/remotion.png"></Img>
+        <Img
+          style={{ height: 60 }}
+          // eslint-disable-next-line @remotion/no-string-assets
+          src="/remotion.png"
+        />
       </a>
     </div>
   );

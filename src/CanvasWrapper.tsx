@@ -1,18 +1,15 @@
 import { PlayerInternals } from "@remotion/player";
-import { forwardRef, useRef } from "react";
+import { useRef } from "react";
 import { Canvas } from "./Canvas";
 import { DraggedConfig } from "./App";
 
-const CanvasWrapperForward: React.ForwardRefRenderFunction<
-  HTMLCanvasElement,
-  {
-    draggedConfig: DraggedConfig | null;
-    draggedDuration: number | null;
-    duration: number;
-    config: DraggedConfig;
-    fps: number;
-  }
-> = ({ config, draggedConfig, draggedDuration, duration, fps }, ref) => {
+export const CanvasWrapper: React.FC<{
+  draggedConfig: DraggedConfig | null;
+  draggedDuration: number | null;
+  duration: number;
+  config: DraggedConfig;
+  fps: number;
+}> = ({ config, draggedConfig, draggedDuration, duration, fps }) => {
   const outer = useRef<HTMLDivElement>(null);
 
   const elementSize = PlayerInternals.useElementSize(outer, {
@@ -22,8 +19,8 @@ const CanvasWrapperForward: React.ForwardRefRenderFunction<
 
   return (
     <div
-      style={{ flex: 1, overflow: "hidden", width: "100%", height: "100%" }}
       ref={outer}
+      style={{ flex: 1, overflow: "hidden", width: "100%", height: "100%" }}
     >
       {elementSize ? (
         <Canvas
@@ -39,5 +36,3 @@ const CanvasWrapperForward: React.ForwardRefRenderFunction<
     </div>
   );
 };
-
-export const CanvasWrapper = forwardRef(CanvasWrapperForward);

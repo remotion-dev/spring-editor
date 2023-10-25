@@ -64,9 +64,9 @@ export const drawTrajectory = ({
     for (let i = 0; i < springTrajectory.length; i++) {
       const timeSinceLastDraw = Date.now() - lastDraw;
       if (animate) {
-        await new Promise((resolve) =>
-          setTimeout(resolve, intervalBetweenDraw - timeSinceLastDraw)
-        );
+        await new Promise((resolve) => {
+          setTimeout(resolve, intervalBetweenDraw - timeSinceLastDraw);
+        });
       }
       if (stopped) {
         break;

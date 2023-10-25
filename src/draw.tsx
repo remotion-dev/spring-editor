@@ -69,13 +69,13 @@ export const draw = ({
 
   const toStop: (() => void)[] = [];
 
-  let stopPrimary = drawTrajectory({
+  const stopPrimary = drawTrajectory({
     springTrajectory: trajectory,
     canvasHeight: height,
     canvasWidth: width,
     context,
     max,
-    primary: draggedConfig ? false : true,
+    primary: !draggedConfig,
     animate: !draggedConfig,
     fps,
   });

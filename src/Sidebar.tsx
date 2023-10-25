@@ -60,35 +60,35 @@ export const Sidebar: React.FC<{
         max={10}
         onValueChange={onMassChange}
         onPointerUp={onRelease}
-      ></Slider>
-      <SliderLabel label="mass" value={mass}></SliderLabel>
+      />
+      <SliderLabel label="mass" value={mass} />
       <Slider
         min={1}
         max={200}
         value={[damping]}
         onValueChange={onDampingChange}
         onPointerUp={onRelease}
-      ></Slider>
-      <SliderLabel label="damping" value={damping}></SliderLabel>
+      />
+      <SliderLabel label="damping" value={damping} />
       <Slider
         min={1}
         max={200}
         value={[stiffness]}
         onValueChange={onStiffnessChange}
         onPointerUp={onRelease}
-      ></Slider>
-      <SliderLabel label="stiffness" value={stiffness}></SliderLabel>
+      />
+      <SliderLabel label="stiffness" value={stiffness} />
       <CheckboxWithLabel
         checked={overshootClamping}
         id="overshootClamping"
         onCheckedChange={onOvershootClampingChange}
-      ></CheckboxWithLabel>
+      />
       <CheckboxWithLabel
         checked={reverse}
         id="reverse"
         onCheckedChange={onReverseChange}
-      ></CheckboxWithLabel>
-      <div style={{ flex: 1 }}></div>
+      />
+      <div style={{ flex: 1 }} />
       <div style={row}>
         <svg height="1em" viewBox="0 0 512 512">
           <path
@@ -96,18 +96,17 @@ export const Sidebar: React.FC<{
             d="M464 256A208 208 0 1 1 48 256a208 208 0 1 1 416 0zM0 256a256 256 0 1 0 512 0A256 256 0 1 0 0 256zM232 120V256c0 8 4 15.5 10.7 20l96 64c11 7.4 25.9 4.4 33.3-6.7s4.4-25.9-6.7-33.3L280 243.2V120c0-13.3-10.7-24-24-24s-24 10.7-24 24z"
           />
         </svg>
-        <Spacing x={1}></Spacing>
+        <Spacing x={1} />
         {(duration / fps).toFixed(2)}sec
       </div>
-      <Spacing y={2}></Spacing>
+      <Spacing y={2} />
       <CodeFrameTabs
         damping={damping}
         mass={mass}
         stiffness={stiffness}
         overshotClamping={overshootClamping}
         reverse={reverse}
-      ></CodeFrameTabs>
-      <Spacing y={2}></Spacing>
+      />
     </div>
   );
 };

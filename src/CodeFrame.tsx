@@ -1,12 +1,19 @@
-import React, { useEffect, useMemo, useState } from "react";
+import React, { useCallback, useEffect, useMemo, useState } from "react";
 import { codeToHtml } from "shikiji";
 import { DEFAULT_DAMPING, DEFAULT_MASS, DEFAULT_STIFFNESS } from "./defaults";
+import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
+import { Button } from "./components/ui/button";
+import { Spacing } from "./Spacing";
+import { copyText } from "./copy-text";
+import toast, { Toaster } from "react-hot-toast";
 
 type Props = {
   damping: number;
   mass: number;
   stiffness: number;
+  // eslint-disable-next-line react/boolean-prop-naming
   overshotClamping: boolean;
+  // eslint-disable-next-line react/boolean-prop-naming
   reverse: boolean;
 };
 
@@ -42,7 +49,7 @@ const CodeFrame: React.FC<
       .filter(Boolean)
       .join("\n");
     return lines;
-  }, [damping, mass, stiffness, overshotClamping, reverse]);
+  }, [damping, mass, stiffness, platform, overshotClamping, reverse]);
 
   useEffect(() => {
     codeToHtml(code, {
@@ -51,6 +58,15 @@ const CodeFrame: React.FC<
     }).then((html) => {
       setH(html);
     });
+  }, [code]);
+
+  const onClick = useCallback(async () => {
+    try {
+      await copyText(code);
+      toast.success("Copied to clipboard!");
+    } catch (err) {
+      toast.error((err as Error).message);
+    }
   }, [code]);
 
   return (
@@ -64,13 +80,21 @@ const CodeFrame: React.FC<
           borderRadius: 8,
         }}
       >
-        {h ? <div dangerouslySetInnerHTML={{ __html: h }}></div> : null}
+        {h ? (
+          <div
+            // eslint-disable-next-line react/no-danger
+            dangerouslySetInnerHTML={{ __html: h }}
+          />
+        ) : null}
       </div>
+      <Spacing block y={1} />
+      <Button style={{ width: "100%" }} onClick={onClick}>
+        Copy
+      </Button>
+      <Toaster />
     </div>
   );
 };
-
-import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 
 export function CodeFrameTabs(props: Props) {
   return (
@@ -80,10 +104,10 @@ export function CodeFrameTabs(props: Props) {
         <TabsTrigger value="password">Reanimated</TabsTrigger>
       </TabsList>
       <TabsContent value="account">
-        <CodeFrame platform="remotion" {...props}></CodeFrame>
+        <CodeFrame platform="remotion" {...props} />
       </TabsContent>
       <TabsContent value="password">
-        <CodeFrame platform="reanimated" {...props}></CodeFrame>
+        <CodeFrame platform="reanimated" {...props} />
       </TabsContent>
     </Tabs>
   );

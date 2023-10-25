@@ -27,7 +27,7 @@ export const Canvas: React.FC<{
       height: "100%",
       backgroundColor: "var(--background)",
     };
-  }, [height, width]);
+  }, []);
 
   useEffect(() => {
     if (!canvasRef.current) {
@@ -48,11 +48,6 @@ export const Canvas: React.FC<{
   }, [draggedDuration, duration, config, draggedConfig, fps, width, height]);
 
   return (
-    <canvas
-      width={width}
-      height={height}
-      ref={canvasRef}
-      style={canvasStyle}
-    ></canvas>
+    <canvas ref={canvasRef} width={width} height={height} style={canvasStyle} />
   );
 };

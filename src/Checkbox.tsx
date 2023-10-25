@@ -18,14 +18,10 @@ export const CheckboxWithLabel: React.FC<{
 }> = ({ id, checked, onCheckedChange }) => {
   return (
     <div style={row}>
-      <Checkbox
-        id={id}
-        onCheckedChange={onCheckedChange}
-        checked={checked}
-      ></Checkbox>
-      <Spacing x={1}></Spacing>
+      <Checkbox id={id} checked={checked} onCheckedChange={onCheckedChange} />
+      <Spacing x={1} />
       <Label htmlFor={id}>
-        {id} <br></br>
+        {id} <br />
       </Label>
     </div>
   );
