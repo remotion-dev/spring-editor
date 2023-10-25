@@ -6,6 +6,7 @@ import { CheckboxWithLabel } from "./Checkbox";
 import { Spacing } from "./Spacing";
 import { CodeFrameTabs } from "./CodeFrame";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "./components/ui/tabs";
+import { PADDING_LEFT } from "./draw-trajectory";
 
 export const Sidebar: React.FC<{
   mass: number;
@@ -37,7 +38,7 @@ export const Sidebar: React.FC<{
     <div
       id="sidebar"
       style={{
-        padding: 30,
+        padding: PADDING_LEFT,
         display: "flex",
         flexDirection: "column",
         borderLeft: "1px solid #242424",

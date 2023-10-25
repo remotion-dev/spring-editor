@@ -3,7 +3,7 @@ import { interpolate, interpolateColors } from "remotion";
 const gradient = ["#42e9f5", "#4290f5"] as const;
 
 export const LINE_WIDTH = 5;
-export const PADDING_LEFT = 80;
+export const PADDING_LEFT = 25;
 export const PADDING_RIGHT = 20;
 export const PADDING_TOP = 20;
 export const PADDING_BOTTOM = 20;

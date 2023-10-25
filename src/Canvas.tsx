@@ -42,7 +42,9 @@ export const Canvas: React.FC<{
     };
   }, []);
 
-  const durationLabel = `${(duration / fps).toFixed(2)}sec`;
+  const durationLabel = `${((draggedDuration ?? duration) / fps).toFixed(
+    2
+  )}sec`;
 
   useEffect(() => {
     if (!canvasRef.current) {
