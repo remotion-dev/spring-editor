@@ -28,6 +28,7 @@ export const AnimationPreview: React.FC<{
       <div
         style={{
           fontSize: 13,
+          color: "rgb(101 101 106)",
         }}
       >
         {animation}
