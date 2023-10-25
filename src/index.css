@@ -89,3 +89,41 @@
   font-style: normal;
 }
 
+#app {
+  flex-direction: row;
+}
+
+#canvas {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+}
+
+#sidebar {
+  width: 400px;
+  height: 100%;
+}
+
+#animation-preview {
+  display: flex;
+  flex-direction: row;
+}
+
+@media screen and (max-width: 900px) {
+  #app {
+    flex-direction: column;
+  }
+  #sidebar {
+    flex: 1;
+    width: 100%;
+    overflow-y: auto;
+  }
+  #canvas {
+    height: 300px;
+    width: 100%;
+    display: block;
+  }
+  #animation-preview {
+    display: none;
+  }
+}

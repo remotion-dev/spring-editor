@@ -21,7 +21,10 @@ const CanvasWrapperForward: React.ForwardRefRenderFunction<
   });
 
   return (
-    <div style={{ flex: 1, overflow: "hidden" }} ref={outer}>
+    <div
+      style={{ flex: 1, overflow: "hidden", width: "100%", height: "100%" }}
+      ref={outer}
+    >
       {elementSize ? (
         <Canvas
           config={config}

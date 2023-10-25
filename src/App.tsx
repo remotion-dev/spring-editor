@@ -114,17 +114,17 @@ function App() {
     >
       <Header></Header>{" "}
       <div
+        id="app"
         style={{
           boxShadow: "0 3px 10px var(--shadow-color)",
           display: "flex",
-          flexDirection: "row",
           borderRadius: 8,
           overflow: "hidden",
           width: "100%",
           flex: 1,
         }}
       >
-        <div style={{ flex: 1, display: "flex", flexDirection: "column" }}>
+        <div id="canvas">
           <CanvasWrapper
             config={config}
             draggedConfig={draggedConfig}
@@ -133,7 +133,7 @@ function App() {
             fps={fps}
             ref={ref}
           ></CanvasWrapper>
-          <div style={{ display: "flex", flexDirection: "row" }}>
+          <div id="animation-preview">
             <AnimationPreview animation="Scale" id="scale"></AnimationPreview>
             <AnimationPreview
               animation="Translate"

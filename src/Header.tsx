@@ -16,9 +16,7 @@ export const Header: React.FC = () => {
         paddingLeft: 20,
       }}
     >
-      <div style={{ fontSize: 20 }}>
-        Spring editor for Remotion and Reanimated
-      </div>
+      <div style={{ fontSize: 20 }}>Spring editor</div>
       <div style={{ flex: 1 }}></div>
       <a href="https://remotion.dev" target="_blank">
         <Img style={{ height: 60 }} src="/remotion.png"></Img>

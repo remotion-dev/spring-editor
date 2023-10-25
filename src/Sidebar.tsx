@@ -45,12 +45,11 @@ export const Sidebar: React.FC<{
 }) => {
   return (
     <div
+      id="sidebar"
       style={{
         padding: 30,
         display: "flex",
         flexDirection: "column",
-        width: 400,
-        height: "100%",
         borderLeft: "1px solid #242424",
       }}
     >
