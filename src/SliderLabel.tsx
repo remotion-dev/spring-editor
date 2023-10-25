@@ -4,7 +4,7 @@ const row: React.CSSProperties = {
   display: "flex",
   flexDirection: "row",
   fontFamily: "GTPlanar",
-  paddingBottom: 30,
+  paddingBottom: 20,
   paddingTop: 9,
 };
 

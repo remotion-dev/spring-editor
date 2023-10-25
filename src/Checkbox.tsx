@@ -2,11 +2,11 @@ import React from "react";
 import { Checkbox } from "./components/ui/checkbox";
 import { Label } from "./components/ui/label";
 import { Spacing } from "./Spacing";
+
 const row: React.CSSProperties = {
   display: "flex",
   flexDirection: "row",
   fontFamily: "GTPlanar",
-  paddingBottom: 30,
   paddingTop: 9,
   alignItems: "center",
 };

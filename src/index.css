@@ -121,6 +121,7 @@
     height: 300px;
     width: 100%;
     display: block;
+    border-bottom: 1px solid #242424;
   }
   #animation-preview {
     display: none;
