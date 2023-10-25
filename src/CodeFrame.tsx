@@ -10,13 +10,11 @@ type Props = {
   reverse: boolean;
 };
 
-const CodeFrame: React.FC<Props> = ({
-  damping,
-  mass,
-  stiffness,
-  overshotClamping,
-  reverse,
-}) => {
+const CodeFrame: React.FC<
+  Props & {
+    platform: "remotion" | "reanimated";
+  }
+> = ({ damping, mass, stiffness, overshotClamping, reverse, platform }) => {
   const [h, setH] = useState<string | null>(null);
 
   const code = useMemo(() => {
@@ -29,8 +27,9 @@ const CodeFrame: React.FC<Props> = ({
 
     const lines = [
       "const spr = spring({",
-      "  frame,",
-      "  fps,",
+      platform === "remotion" ? "  frame," : null,
+      platform === "remotion" ? "  fps," : null,
+      platform === "reanimated" ? "  toValue: 1," : null,
       isAllDefault ? null : "  config: {",
       isDefaultDamping ? null : `    damping: ${damping}`,
       isDefaultMass ? null : `    mass: ${mass}`,
@@ -50,14 +49,9 @@ const CodeFrame: React.FC<Props> = ({
       lang: "javascript",
       theme: "github-dark",
     }).then((html) => {
-      console.log({ html });
       setH(html);
     });
   }, [code]);
-
-  if (!h) {
-    return null;
-  }
 
   return (
     <div>
@@ -65,12 +59,12 @@ const CodeFrame: React.FC<Props> = ({
         style={{
           backgroundColor: "#24292E",
           paddingTop: 14,
-          paddingBottom: 14,
           paddingLeft: 20,
+          height: 300,
           borderRadius: 8,
         }}
       >
-        <div dangerouslySetInnerHTML={{ __html: h }}></div>
+        {h ? <div dangerouslySetInnerHTML={{ __html: h }}></div> : null}
       </div>
     </div>
   );
@@ -86,9 +80,11 @@ export function CodeFrameTabs(props: Props) {
         <TabsTrigger value="password">Reanimated</TabsTrigger>
       </TabsList>
       <TabsContent value="account">
-        <CodeFrame {...props}></CodeFrame>
+        <CodeFrame platform="remotion" {...props}></CodeFrame>
       </TabsContent>
-      <TabsContent value="password">coming soon</TabsContent>
+      <TabsContent value="password">
+        <CodeFrame platform="reanimated" {...props}></CodeFrame>
+      </TabsContent>
     </Tabs>
   );
 }

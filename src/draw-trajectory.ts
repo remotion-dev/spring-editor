@@ -30,7 +30,7 @@ const getY = ({
   );
 };
 
-export const drawTrajectory = async ({
+export const drawTrajectory = ({
   context,
   canvasHeight,
   canvasWidth,
@@ -57,50 +57,65 @@ export const drawTrajectory = async ({
   let lastX = getX({ i: 0, segmentWidth });
   let lastY = getY({ i: 0, canvasHeight, max, springTrajectory });
   let lastDraw = Date.now();
-  for (let i = 0; i < springTrajectory.length; i++) {
-    const timeSinceLastDraw = Date.now() - lastDraw;
-    if (animate) {
-      await new Promise((resolve) =>
-        setTimeout(resolve, intervalBetweenDraw - timeSinceLastDraw)
+
+  let stopped = false;
+
+  const executeDraw = async () => {
+    for (let i = 0; i < springTrajectory.length; i++) {
+      const timeSinceLastDraw = Date.now() - lastDraw;
+      if (animate) {
+        await new Promise((resolve) =>
+          setTimeout(resolve, intervalBetweenDraw - timeSinceLastDraw)
+        );
+      }
+      if (stopped) {
+        break;
+      }
+
+      context.beginPath();
+      context.moveTo(lastX, lastY);
+      context.lineWidth = LINE_WIDTH;
+      context.lineCap = "round";
+      const color = interpolateColors(
+        i,
+        [0, springTrajectory.length - 1],
+        gradient
       );
+      const x = getX({ i, segmentWidth });
+      const y = getY({ canvasHeight, i, max, springTrajectory });
+
+      lastX = x;
+      lastY = y;
+
+      context.strokeStyle = primary ? color : "#333";
+      context.lineTo(x, y);
+      context.stroke();
+      context.closePath();
+      lastDraw = Date.now();
+
+      (
+        document.getElementById("scale") as HTMLElement
+      ).style.transform = `scale(${springTrajectory[i]})`;
+      (
+        document.getElementById("translate") as HTMLElement
+      ).style.transform = `translateY(${interpolate(
+        springTrajectory[i],
+        [0, 1],
+        [100, 0]
+      )}px)`;
+      (
+        document.getElementById("rotate") as HTMLElement
+      ).style.transform = `rotate(${interpolate(
+        springTrajectory[i],
+        [0, 1],
+        [Math.PI * 2, 0]
+      )}rad)`;
     }
-    context.beginPath();
-    context.moveTo(lastX, lastY);
-    context.lineWidth = LINE_WIDTH;
-    context.lineCap = "round";
-    const color = interpolateColors(
-      i,
-      [0, springTrajectory.length - 1],
-      gradient
-    );
-    const x = getX({ i, segmentWidth });
-    const y = getY({ canvasHeight, i, max, springTrajectory });
+  };
 
-    lastX = x;
-    lastY = y;
+  executeDraw();
 
-    context.strokeStyle = primary ? color : "#333";
-    context.lineTo(x, y);
-    context.stroke();
-    context.closePath();
-    lastDraw = Date.now();
-
-    (
-      document.getElementById("scale") as HTMLElement
-    ).style.transform = `scale(${springTrajectory[i]})`;
-    (
-      document.getElementById("translate") as HTMLElement
-    ).style.transform = `translateY(${interpolate(
-      springTrajectory[i],
-      [0, 1],
-      [100, 0]
-    )}px)`;
-    (
-      document.getElementById("rotate") as HTMLElement
-    ).style.transform = `rotate(${interpolate(
-      springTrajectory[i],
-      [0, 1],
-      [Math.PI * 2, 0]
-    )}rad)`;
-  }
+  return () => {
+    stopped = true;
+  };
 };

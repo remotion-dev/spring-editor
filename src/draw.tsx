@@ -9,6 +9,8 @@ import {
 } from "./draw-trajectory";
 import { DraggedConfig } from "./App";
 
+export let stopDrawing = () => {};
+
 export const draw = ({
   ref,
   duration,
@@ -65,7 +67,9 @@ export const draw = ({
   context.stroke();
   context.closePath();
 
-  drawTrajectory({
+  const toStop: (() => void)[] = [];
+
+  let stopPrimary = drawTrajectory({
     springTrajectory: trajectory,
     canvasHeight: height,
     canvasWidth: width,
@@ -75,16 +79,24 @@ export const draw = ({
     animate: !draggedConfig,
     fps,
   });
+  toStop.push(stopPrimary);
+
   if (draggedConfig) {
-    drawTrajectory({
-      springTrajectory: draggedTrajectory,
-      canvasHeight: height,
-      canvasWidth: width,
-      context,
-      max,
-      primary: true,
-      animate: false,
-      fps,
-    });
+    toStop.push(
+      drawTrajectory({
+        springTrajectory: draggedTrajectory,
+        canvasHeight: height,
+        canvasWidth: width,
+        context,
+        max,
+        primary: true,
+        animate: false,
+        fps,
+      })
+    );
   }
+
+  stopDrawing = () => {
+    toStop.forEach((stop) => stop());
+  };
 };

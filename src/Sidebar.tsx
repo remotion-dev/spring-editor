@@ -1,11 +1,10 @@
 import React from "react";
 import { Slider } from "./components/ui/slider";
-import { Button } from "./components/ui/button";
 
 import { SliderLabel } from "./SliderLabel";
 import { CheckboxWithLabel } from "./Checkbox";
 import { Spacing } from "./Spacing";
-import { CodeFrame, CodeFrameTabs } from "./CodeFrame";
+import { CodeFrameTabs } from "./CodeFrame";
 
 const row: React.CSSProperties = {
   display: "flex",

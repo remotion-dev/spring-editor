@@ -21,10 +21,7 @@ export const Header: React.FC = () => {
       </div>
       <div style={{ flex: 1 }}></div>
       <a href="https://remotion.dev" target="_blank">
-        <Img
-          style={{ height: 60 }}
-          src="https://github.com/remotion-dev/brand/raw/main/withtitle-dark/element-0.png"
-        ></Img>
+        <Img style={{ height: 60 }} src="/remotion.png"></Img>
       </a>
     </div>
   );

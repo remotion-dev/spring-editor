@@ -1,5 +1,5 @@
 import React, { useEffect, useMemo } from "react";
-import { draw } from "./draw";
+import { draw, stopDrawing } from "./draw";
 import { DraggedConfig } from "./App";
 
 const canvasRef = React.createRef<HTMLCanvasElement>();
@@ -34,6 +34,7 @@ export const Canvas: React.FC<{
       throw new Error("no canvas");
     }
 
+    stopDrawing();
     draw({
       ref: canvasRef.current,
       duration: draggedDuration ?? duration,

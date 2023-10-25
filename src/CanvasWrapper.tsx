@@ -21,7 +21,7 @@ const CanvasWrapperForward: React.ForwardRefRenderFunction<
   });
 
   return (
-    <div style={{ flex: 1 }} ref={outer}>
+    <div style={{ flex: 1, overflow: "hidden" }} ref={outer}>
       {elementSize ? (
         <Canvas
           config={config}
@@ -31,7 +31,7 @@ const CanvasWrapperForward: React.ForwardRefRenderFunction<
           fps={fps}
           height={elementSize.height}
           width={elementSize.width}
-        ></Canvas>
+        />
       ) : null}
     </div>
   );
