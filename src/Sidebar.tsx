@@ -87,7 +87,7 @@ export const Sidebar: React.FC<{
           <SliderLabel toggleable={null} label="stiffness" value={stiffness} />
           <Slider
             min={0}
-            max={2000}
+            max={400}
             value={[delay]}
             onValueChange={(val) => {
               onDelayChange(val[0]);
