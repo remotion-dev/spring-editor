@@ -50,7 +50,7 @@ export const draw = ({
     : Math.max(...trajectory);
 
   context.strokeStyle = "rgba(255, 255, 255, 0.05)";
-  context.lineWidth = LINE_WIDTH;
+  context.lineWidth = LINE_WIDTH * window.devicePixelRatio;
   context.lineCap = "round";
 
   // Draw 0 line

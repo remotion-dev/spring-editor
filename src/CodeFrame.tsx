@@ -16,6 +16,7 @@ type Props = {
   // eslint-disable-next-line react/boolean-prop-naming
   reverse: boolean;
   durationInFrames: number | null;
+  delay: number;
 };
 
 const CodeFrame: React.FC<
@@ -30,6 +31,7 @@ const CodeFrame: React.FC<
   reverse,
   platform,
   durationInFrames,
+  delay,
 }) => {
   const [h, setH] = useState<string | null>(null);
 
@@ -51,9 +53,10 @@ const CodeFrame: React.FC<
       isDefaultMass ? null : `    mass: ${mass}`,
       isDefaultStiffness ? null : `    stiffness: ${stiffness}`,
       isAllDefault ? null : "  },",
-      durationInFrames === null
+      durationInFrames === null || platform === "reanimated"
         ? null
         : `  durationInFrames: ${durationInFrames},`,
+      delay === 0 || platform === "reanimated" ? 0 : `  delay: ${delay},`,
       overshotClamping ? "  overshootClamping: true," : null,
       reverse ? "  reverse: true," : null,
       "});",
@@ -67,6 +70,7 @@ const CodeFrame: React.FC<
     stiffness,
     platform,
     durationInFrames,
+    delay,
     overshotClamping,
     reverse,
   ]);

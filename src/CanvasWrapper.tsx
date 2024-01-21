@@ -35,8 +35,8 @@ export const CanvasWrapper: React.FC<{
           draggedDuration={draggedDuration}
           duration={duration}
           fps={fps}
-          height={elementSize.height}
-          width={elementSize.width}
+          height={elementSize.height * window.devicePixelRatio}
+          width={elementSize.width * window.devicePixelRatio}
         />
       ) : null}
     </div>

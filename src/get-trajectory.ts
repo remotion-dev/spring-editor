@@ -13,6 +13,7 @@ export const getTrajectory = (
       config,
       reverse,
       durationInFrames: config.durationInFrames ?? undefined,
+      delay: config.delay ?? undefined,
     });
   });
 };

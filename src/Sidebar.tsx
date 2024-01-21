@@ -14,10 +14,12 @@ export const Sidebar: React.FC<{
   stiffness: number;
   fixedDurationInFrames: number | null;
   calculatedDurationInFrames: number;
+  delay: number;
   onMassChange: (e: [number]) => void;
   onDampingChange: (e: [number]) => void;
   onStiffnessChange: (e: [number]) => void;
   onDurationInFramesChange: (e: number | null) => void;
+  onDelayChange: (e: number) => void;
   overshootClamping: boolean;
   onRelease: () => void;
   onOvershootClampingChange: (checked: boolean) => void;
@@ -38,6 +40,8 @@ export const Sidebar: React.FC<{
   onOvershootClampingChange,
   onReverseChange,
   reverse,
+  delay,
+  onDelayChange,
 }) => {
   return (
     <div
@@ -73,7 +77,6 @@ export const Sidebar: React.FC<{
             onPointerUp={onRelease}
           />
           <SliderLabel label="damping" value={damping} toggleable={null} />
-
           <Slider
             min={1}
             max={200}
@@ -82,12 +85,21 @@ export const Sidebar: React.FC<{
             onPointerUp={onRelease}
           />
           <SliderLabel toggleable={null} label="stiffness" value={stiffness} />
+          <Slider
+            min={0}
+            max={2000}
+            value={[delay]}
+            onValueChange={(val) => {
+              onDelayChange(val[0]);
+            }}
+            onPointerUp={onRelease}
+          />
+          <SliderLabel label="delay" toggleable={null} value={delay} />
           <>
             <Slider
               min={1}
               max={200}
               value={[fixedDurationInFrames ?? calculatedDurationInFrames]}
-              disabled={fixedDurationInFrames === null}
               style={{ opacity: fixedDurationInFrames === null ? 0.5 : 1 }}
               onValueChange={(val) => {
                 onDurationInFramesChange(val[0]);
@@ -116,11 +128,11 @@ export const Sidebar: React.FC<{
             id="reverse"
             onCheckedChange={onReverseChange}
           />
-
           <Spacing y={2} />
         </TabsContent>
         <TabsContent value="code">
           <CodeFrameTabs
+            delay={delay}
             damping={damping}
             mass={mass}
             stiffness={stiffness}

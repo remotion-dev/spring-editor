@@ -12,6 +12,7 @@ const fps = 60;
 export type DraggedConfig = SpringConfig & {
   reverse: boolean;
   durationInFrames: number | null;
+  delay: number;
 };
 
 function App() {
@@ -19,6 +20,7 @@ function App() {
     SpringConfig & {
       reverse: boolean;
       durationInFrames: number | null;
+      delay: number;
     }
   >({
     damping: DEFAULT_DAMPING,
@@ -27,6 +29,7 @@ function App() {
     overshootClamping: false,
     reverse: false,
     durationInFrames: null,
+    delay: 0,
   });
 
   const [draggedConfig, setDraggedConfig] = useState<DraggedConfig | null>(
@@ -58,6 +61,14 @@ function App() {
     (e: number | null) => {
       setDraggedConfig({ ...config, durationInFrames: e });
       setConfig({ ...config, durationInFrames: e });
+    },
+    [config]
+  );
+
+  const onDelayChange = useCallback(
+    (e: number) => {
+      setDraggedConfig({ ...config, delay: e });
+      setConfig({ ...config, delay: e });
     },
     [config]
   );
@@ -97,21 +108,23 @@ function App() {
     setDraggedConfig(null);
   }, [draggedConfig]);
 
-  const duration = config.durationInFrames
-    ? config.durationInFrames
-    : measureSpring({
-        fps,
-        threshold: 0.001,
-        config,
-      });
+  const duration =
+    config.delay +
+    (config.durationInFrames
+      ? config.durationInFrames
+      : measureSpring({
+          fps,
+          threshold: 0.001,
+          config,
+        }));
   const draggedDuration = draggedConfig
     ? draggedConfig.durationInFrames
-      ? draggedConfig.durationInFrames
+      ? draggedConfig.durationInFrames + draggedConfig.delay
       : measureSpring({
           fps,
           threshold: 0.001,
           config: draggedConfig,
-        })
+        }) + draggedConfig.delay
     : null;
 
   return (
@@ -162,6 +175,7 @@ function App() {
             draggedConfig?.durationInFrames ?? config.durationInFrames
           }
           calculatedDurationInFrames={duration}
+          delay={draggedConfig?.delay ?? config.delay}
           onMassChange={onMassChange}
           onDampingChange={onDampingChange}
           onStiffnessChange={onStiffnessChange}
@@ -169,6 +183,7 @@ function App() {
           onOvershootClampingChange={onOvershootClampingChange}
           onReverseChange={onReverseChange}
           onDurationInFramesChange={onDurationInFramesChange}
+          onDelayChange={onDelayChange}
         />
       </div>
     </div>
