@@ -57,6 +57,7 @@ function App() {
   const onDurationInFramesChange = useCallback(
     (e: number | null) => {
       setDraggedConfig({ ...config, durationInFrames: e });
+      setConfig({ ...config, durationInFrames: e });
     },
     [config]
   );
