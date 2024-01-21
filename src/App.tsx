@@ -11,12 +11,14 @@ const fps = 60;
 
 export type DraggedConfig = SpringConfig & {
   reverse: boolean;
+  durationInFrames: number | null;
 };
 
 function App() {
   const [config, setConfig] = useState<
     SpringConfig & {
       reverse: boolean;
+      durationInFrames: number | null;
     }
   >({
     damping: DEFAULT_DAMPING,
@@ -24,6 +26,7 @@ function App() {
     stiffness: DEFAULT_STIFFNESS,
     overshootClamping: false,
     reverse: false,
+    durationInFrames: null,
   });
 
   const [draggedConfig, setDraggedConfig] = useState<DraggedConfig | null>(
@@ -47,6 +50,13 @@ function App() {
   const onStiffnessChange = useCallback(
     (e: number[]) => {
       setDraggedConfig({ ...config, stiffness: e[0] });
+    },
+    [config]
+  );
+
+  const onDurationInFramesChange = useCallback(
+    (e: number | null) => {
+      setDraggedConfig({ ...config, durationInFrames: e });
     },
     [config]
   );
@@ -86,17 +96,21 @@ function App() {
     setDraggedConfig(null);
   }, [draggedConfig]);
 
-  const duration = measureSpring({
-    fps,
-    threshold: 0.001,
-    config,
-  });
-  const draggedDuration = draggedConfig
-    ? measureSpring({
+  const duration = config.durationInFrames
+    ? config.durationInFrames
+    : measureSpring({
         fps,
         threshold: 0.001,
-        config: draggedConfig,
-      })
+        config,
+      });
+  const draggedDuration = draggedConfig
+    ? draggedConfig.durationInFrames
+      ? draggedConfig.durationInFrames
+      : measureSpring({
+          fps,
+          threshold: 0.001,
+          config: draggedConfig,
+        })
     : null;
 
   return (
@@ -143,12 +157,17 @@ function App() {
           stiffness={draggedConfig?.stiffness ?? config.stiffness}
           overshootClamping={config.overshootClamping}
           reverse={config.reverse}
+          fixedDurationInFrames={
+            draggedConfig?.durationInFrames ?? config.durationInFrames
+          }
+          calculatedDurationInFrames={duration}
           onMassChange={onMassChange}
           onDampingChange={onDampingChange}
           onStiffnessChange={onStiffnessChange}
           onRelease={onRelease}
           onOvershootClampingChange={onOvershootClampingChange}
           onReverseChange={onReverseChange}
+          onDurationInFramesChange={onDurationInFramesChange}
         />
       </div>
     </div>

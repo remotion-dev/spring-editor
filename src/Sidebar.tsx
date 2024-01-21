@@ -12,9 +12,12 @@ export const Sidebar: React.FC<{
   mass: number;
   damping: number;
   stiffness: number;
+  fixedDurationInFrames: number | null;
+  calculatedDurationInFrames: number;
   onMassChange: (e: [number]) => void;
   onDampingChange: (e: [number]) => void;
   onStiffnessChange: (e: [number]) => void;
+  onDurationInFramesChange: (e: number | null) => void;
   overshootClamping: boolean;
   onRelease: () => void;
   onOvershootClampingChange: (checked: boolean) => void;
@@ -25,11 +28,13 @@ export const Sidebar: React.FC<{
   onDampingChange,
   onMassChange,
   onStiffnessChange,
+  onDurationInFramesChange,
+  fixedDurationInFrames,
   overshootClamping,
   onRelease,
   damping,
   stiffness,
-
+  calculatedDurationInFrames,
   onOvershootClampingChange,
   onReverseChange,
   reverse,
@@ -59,7 +64,7 @@ export const Sidebar: React.FC<{
             onValueChange={onMassChange}
             onPointerUp={onRelease}
           />
-          <SliderLabel label="mass" value={mass} />
+          <SliderLabel label="mass" value={mass} toggleable={null} />
           <Slider
             min={1}
             max={200}
@@ -67,7 +72,8 @@ export const Sidebar: React.FC<{
             onValueChange={onDampingChange}
             onPointerUp={onRelease}
           />
-          <SliderLabel label="damping" value={damping} />
+          <SliderLabel label="damping" value={damping} toggleable={null} />
+
           <Slider
             min={1}
             max={200}
@@ -75,7 +81,31 @@ export const Sidebar: React.FC<{
             onValueChange={onStiffnessChange}
             onPointerUp={onRelease}
           />
-          <SliderLabel label="stiffness" value={stiffness} />
+          <SliderLabel toggleable={null} label="stiffness" value={stiffness} />
+          <>
+            <Slider
+              min={1}
+              max={200}
+              value={[fixedDurationInFrames ?? calculatedDurationInFrames]}
+              disabled={fixedDurationInFrames === null}
+              style={{ opacity: fixedDurationInFrames === null ? 0.5 : 1 }}
+              onValueChange={(val) => {
+                onDurationInFramesChange(val[0]);
+              }}
+              onPointerUp={onRelease}
+            />
+            <SliderLabel
+              label="durationInFrames"
+              toggleable={(enabled) => {
+                if (enabled) {
+                  onDurationInFramesChange(calculatedDurationInFrames);
+                } else {
+                  onDurationInFramesChange(null);
+                }
+              }}
+              value={fixedDurationInFrames ?? null}
+            />
+          </>
           <CheckboxWithLabel
             checked={overshootClamping}
             id="overshootClamping"
@@ -86,6 +116,7 @@ export const Sidebar: React.FC<{
             id="reverse"
             onCheckedChange={onReverseChange}
           />
+
           <Spacing y={2} />
         </TabsContent>
         <TabsContent value="code">
@@ -95,7 +126,8 @@ export const Sidebar: React.FC<{
             stiffness={stiffness}
             overshotClamping={overshootClamping}
             reverse={reverse}
-          />{" "}
+            durationInFrames={fixedDurationInFrames}
+          />
         </TabsContent>
       </Tabs>
     </div>

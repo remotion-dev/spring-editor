@@ -15,13 +15,22 @@ type Props = {
   overshotClamping: boolean;
   // eslint-disable-next-line react/boolean-prop-naming
   reverse: boolean;
+  durationInFrames: number | null;
 };
 
 const CodeFrame: React.FC<
   Props & {
     platform: "remotion" | "reanimated";
   }
-> = ({ damping, mass, stiffness, overshotClamping, reverse, platform }) => {
+> = ({
+  damping,
+  mass,
+  stiffness,
+  overshotClamping,
+  reverse,
+  platform,
+  durationInFrames,
+}) => {
   const [h, setH] = useState<string | null>(null);
 
   const code = useMemo(() => {
@@ -42,6 +51,9 @@ const CodeFrame: React.FC<
       isDefaultMass ? null : `    mass: ${mass}`,
       isDefaultStiffness ? null : `    stiffness: ${stiffness}`,
       isAllDefault ? null : "  },",
+      durationInFrames === null
+        ? null
+        : `  durationInFrames: ${durationInFrames},`,
       overshotClamping ? "  overshootClamping: true," : null,
       reverse ? "  reverse: true," : null,
       "});",
@@ -49,7 +61,15 @@ const CodeFrame: React.FC<
       .filter(Boolean)
       .join("\n");
     return lines;
-  }, [damping, mass, stiffness, platform, overshotClamping, reverse]);
+  }, [
+    damping,
+    mass,
+    stiffness,
+    platform,
+    durationInFrames,
+    overshotClamping,
+    reverse,
+  ]);
 
   useEffect(() => {
     codeToHtml(code, {
@@ -98,15 +118,15 @@ const CodeFrame: React.FC<
 
 export function CodeFrameTabs(props: Props) {
   return (
-    <Tabs defaultValue="account">
+    <Tabs defaultValue="remotion">
       <TabsList className="grid w-full grid-cols-2">
-        <TabsTrigger value="account">Remotion</TabsTrigger>
-        <TabsTrigger value="password">Reanimated</TabsTrigger>
+        <TabsTrigger value="remotion">Remotion</TabsTrigger>
+        <TabsTrigger value="reanimated">Reanimated</TabsTrigger>
       </TabsList>
-      <TabsContent value="account">
+      <TabsContent value="remotion">
         <CodeFrame platform="remotion" {...props} />
       </TabsContent>
-      <TabsContent value="password">
+      <TabsContent value="reanimated">
         <CodeFrame platform="reanimated" {...props} />
       </TabsContent>
     </Tabs>

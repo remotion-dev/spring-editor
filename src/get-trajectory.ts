@@ -12,6 +12,7 @@ export const getTrajectory = (
       frame: i,
       config,
       reverse,
+      durationInFrames: config.durationInFrames ?? undefined,
     });
   });
 };

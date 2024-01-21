@@ -17,7 +17,7 @@ export const Header: React.FC = () => {
         paddingRight: 18,
       }}
     >
-      <div style={{ fontSize: 20 }}>Spring editor</div>
+      <div style={{ fontSize: 20 }}>Spring Editor</div>
       <div style={{ flex: 1 }} />
       <a href="https://remotion.dev" target="_blank">
         <Img
