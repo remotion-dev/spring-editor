@@ -33,7 +33,6 @@ export const Canvas: React.FC<{
   const [durationType, setDurationType] = React.useState<"seconds" | "frames">(
     "seconds"
   );
-  console.log("draggedDuration: ", draggedDuration, "duration: ", duration);
 
   const durationLabel =
     durationType === "seconds"

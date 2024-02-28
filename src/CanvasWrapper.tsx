@@ -11,7 +11,6 @@ export const CanvasWrapper: React.FC<{
   fps: number;
 }> = ({ springConfigs, draggedConfigs, draggedDuration, duration, fps }) => {
   const outer = useRef<HTMLDivElement>(null);
-  console.log("duration: ", duration, "draggedDuration: ", draggedDuration);
   const elementSize = PlayerInternals.useElementSize(outer, {
     shouldApplyCssTransforms: false,
     triggerOnWindowResize: true,

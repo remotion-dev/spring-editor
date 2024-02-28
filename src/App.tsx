@@ -194,7 +194,6 @@ function App() {
         return calculatedDuration > max ? calculatedDuration : max;
       }, 0)
     : null;
-  console.log("duration:", duration);
   return (
     <div
       style={{

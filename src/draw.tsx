@@ -49,8 +49,6 @@ export const draw = ({
         draggedConfigs as DraggedConfig[]
       )
     : [];
-  console.log("dragedConfigs", draggedConfigs);
-  console.log(trajectory);
   const max = hasSomeDragged
     ? Math.max(...draggedTrajectory)
     : Math.max(...trajectory);
@@ -104,7 +102,6 @@ export const draw = ({
   toStop.push(stopPrimary);
 
   if (hasSomeDragged) {
-    console.log(trajectory);
     toStop.push(
       drawTrajectory({
         springTrajectory: draggedTrajectory,

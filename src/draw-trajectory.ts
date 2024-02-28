@@ -49,8 +49,6 @@ export const drawTrajectory = ({
   animate: boolean;
   fps: number;
 }) => {
-  console.log("animate: ", animate);
-  console.log("primary: ", primary);
   const intervalBetweenDraw = 1000 / fps;
   const segmentWidth =
     (canvasWidth - PADDING_LEFT - PADDING_RIGHT) /
