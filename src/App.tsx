@@ -26,11 +26,6 @@ function App() {
       durationInFrames: null,
       delay: 0,
     },
-  ]);
-
-  const [draggedConfigs, setDraggedConfigs] = useState<
-    (DraggedConfig | null)[]
-  >([
     {
       damping: DEFAULT_DAMPING,
       mass: DEFAULT_MASS,
@@ -42,62 +37,55 @@ function App() {
     },
   ]);
 
+  const [draggedConfig, setDraggedConfig] = useState<DraggedConfig | null>(
+    null
+  );
+
   const onMassChange = useCallback(
-    (e: [number], index: number) => {
-      setDraggedConfigs([
-        ...springConfigs.slice(0, index),
-        { ...springConfigs[index], mass: e[0] },
-        ...springConfigs.slice(index + 1),
-      ]);
+    (e: number[], index: number) => {
+      setDraggedConfig({
+        ...springConfigs[index],
+        mass: e[0],
+      });
     },
     [springConfigs]
   );
-
   const onDampingChange = useCallback(
     (e: number[], index: number) => {
-      setDraggedConfigs([
-        ...springConfigs.slice(0, index),
-        { ...springConfigs[index], damping: e[0] },
-        ...springConfigs.slice(index + 1),
-      ]);
+      setDraggedConfig({
+        ...springConfigs[index],
+        damping: e[0],
+      });
     },
     [springConfigs]
   );
 
   const onStiffnessChange = useCallback(
     (e: number[], index: number) => {
-      setDraggedConfigs([
-        ...springConfigs.slice(0, index),
-        { ...springConfigs[index], stiffness: e[0] },
-        ...springConfigs.slice(index + 1),
-      ]);
+      setDraggedConfig({
+        ...springConfigs[index],
+        stiffness: e[0],
+      });
     },
     [springConfigs]
   );
 
   const onDurationInFramesChange = useCallback(
     (e: number | null, index: number) => {
-      setDraggedConfigs([
-        ...springConfigs.slice(0, index),
-        { ...springConfigs[index], durationInFrames: e },
-        ...springConfigs.slice(index + 1),
-      ]);
-      setSpringConfigs([
-        ...springConfigs.slice(0, index),
-        { ...springConfigs[index], durationInFrames: e },
-        ...springConfigs.slice(index + 1),
-      ]);
+      setDraggedConfig({
+        ...springConfigs[index],
+        durationInFrames: e,
+      });
     },
     [springConfigs]
   );
 
   const onDelayChange = useCallback(
     (e: number, index: number) => {
-      setDraggedConfigs([
-        ...springConfigs.slice(0, index),
-        { ...springConfigs[index], delay: e },
-        ...springConfigs.slice(index + 1),
-      ]);
+      setDraggedConfig({
+        ...springConfigs[index],
+        delay: e,
+      });
       setSpringConfigs([
         ...springConfigs.slice(0, index),
         { ...springConfigs[index], delay: e },
@@ -109,11 +97,10 @@ function App() {
 
   const onOvershootClampingChange = useCallback(
     (checked: boolean, index: number) => {
-      setDraggedConfigs([
-        ...springConfigs.slice(0, index),
-        { ...springConfigs[index], overshootClamping: checked },
-        ...springConfigs.slice(index + 1),
-      ]);
+      setDraggedConfig({
+        ...springConfigs[index],
+        overshootClamping: checked,
+      });
       setSpringConfigs([
         ...springConfigs.slice(0, index),
         { ...springConfigs[index], overshootClamping: checked },
@@ -125,11 +112,10 @@ function App() {
 
   const onReverseChange = useCallback(
     (checked: boolean, index: number) => {
-      setDraggedConfigs([
-        ...springConfigs.slice(0, index),
-        { ...springConfigs[index], reverse: checked },
-        ...springConfigs.slice(index + 1),
-      ]);
+      setDraggedConfig({
+        ...springConfigs[index],
+        reverse: checked,
+      });
       setSpringConfigs([
         ...springConfigs.slice(0, index),
         { ...springConfigs[index], reverse: checked },
@@ -141,20 +127,16 @@ function App() {
 
   const onRelease = useCallback(
     (index: number) => {
-      if (draggedConfigs[index]) {
+      if (draggedConfig) {
         setSpringConfigs([
           ...springConfigs.slice(0, index),
-          draggedConfigs[index] as DraggedConfig,
+          draggedConfig as DraggedConfig,
           ...springConfigs.slice(index + 1),
         ]);
       }
-      setDraggedConfigs([
-        ...draggedConfigs.slice(0, index),
-        null,
-        ...draggedConfigs.slice(index + 1),
-      ]);
+      setDraggedConfig(null);
     },
-    [draggedConfigs, springConfigs]
+    [draggedConfig, springConfigs]
   );
 
   const duration = springConfigs.reduce((max, config) => {
@@ -166,17 +148,15 @@ function App() {
     return calculatedDuration > max ? calculatedDuration : max;
   }, 0);
 
-  const draggedDuration = draggedConfigs.reduce((max, draggedConfig) => {
-    if (!draggedConfig) {
-      return max;
-    }
-    const calculatedDuration =
-      draggedConfig.delay +
-      (draggedConfig.durationInFrames
-        ? draggedConfig.durationInFrames
-        : measureSpring({ fps, threshold: 0.001, config: draggedConfig }));
-    return calculatedDuration > max ? calculatedDuration : max;
-  }, 0);
+  const draggedDuration = draggedConfig
+    ? draggedConfig.durationInFrames
+      ? draggedConfig.durationInFrames + draggedConfig.delay
+      : measureSpring({
+          fps,
+          threshold: 0.001,
+          config: draggedConfig,
+        }) + draggedConfig.delay
+    : null;
 
   return (
     <div
@@ -204,9 +184,11 @@ function App() {
       >
         <div id="canvas">
           <CanvasWrapper
-            config={config}
+            springConfigs={springConfigs}
             draggedConfig={draggedConfig}
-            draggedDuration={draggedDuration > 0 ? draggedDuration : null}
+            draggedDuration={
+              draggedDuration && draggedDuration > 0 ? draggedDuration : null
+            }
             duration={duration}
             fps={fps}
           />
@@ -218,7 +200,7 @@ function App() {
         </div>
         <Sidebar
           springConfigs={springConfigs}
-          draggedConfigs={draggedConfigs}
+          draggedConfig={draggedConfig}
           calculatedDurationInFrames={duration}
           onMassChange={onMassChange}
           onDampingChange={onDampingChange}

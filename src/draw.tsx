@@ -16,7 +16,7 @@ export const draw = ({
   ref,
   duration,
   fps,
-  config,
+  springConfigs,
   draggedConfig,
   draggedDuration,
   height,
@@ -26,7 +26,7 @@ export const draw = ({
   ref: HTMLCanvasElement;
   duration: number;
   fps: number;
-  config: DraggedConfig;
+  springConfigs: DraggedConfig[];
   draggedConfig: DraggedConfig | null;
   draggedDuration: number | null;
   width: number;
@@ -38,11 +38,10 @@ export const draw = ({
   if (!context) {
     return;
   }
-
   context.clearRect(0, 0, width, height);
-  const trajectory = getTrajectory(duration, fps, config);
+  const trajectory = getTrajectory(duration, fps, springConfigs);
   const draggedTrajectory = draggedConfig
-    ? getTrajectory(draggedDuration ?? duration, fps, draggedConfig)
+    ? getTrajectory(draggedDuration ?? duration, fps, [draggedConfig])
     : [];
 
   const max = draggedConfig

@@ -11,14 +11,14 @@ export const Canvas: React.FC<{
   draggedConfig: DraggedConfig | null;
   draggedDuration: number | null;
   duration: number;
-  config: DraggedConfig;
+  springConfigs: DraggedConfig[];
   fps: number;
 }> = ({
   height,
   width,
   draggedConfig,
   draggedDuration,
-  config,
+  springConfigs,
   duration,
   fps,
 }) => {
@@ -48,7 +48,7 @@ export const Canvas: React.FC<{
     draw({
       ref: canvasRef.current,
       duration: draggedDuration ?? duration,
-      config,
+      springConfigs,
       draggedConfig,
       fps,
       draggedDuration,
@@ -59,12 +59,12 @@ export const Canvas: React.FC<{
   }, [
     draggedDuration,
     duration,
-    config,
     draggedConfig,
     fps,
     width,
     height,
     durationLabel,
+    springConfigs,
   ]);
 
   return (

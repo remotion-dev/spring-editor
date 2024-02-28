@@ -7,19 +7,19 @@ import { SpringControls } from "./SpringControls";
 
 export const Sidebar: React.FC<{
   springConfigs: DraggedConfig[];
-  draggedConfigs: (DraggedConfig | null)[];
+  draggedConfig: DraggedConfig | null;
   calculatedDurationInFrames: number;
   onMassChange: (e: [number], index: number) => void;
-  onDampingChange: (e: [number]) => void;
-  onStiffnessChange: (e: [number]) => void;
-  onDurationInFramesChange: (e: number | null) => void;
-  onDelayChange: (e: number) => void;
-  onRelease: () => void;
-  onOvershootClampingChange: (checked: boolean) => void;
-  onReverseChange: (checked: boolean) => void;
+  onDampingChange: (e: [number], index: number) => void;
+  onStiffnessChange: (e: [number], index: number) => void;
+  onDurationInFramesChange: (e: number | null, index: number) => void;
+  onDelayChange: (e: number, index: number) => void;
+  onRelease: (index: number) => void;
+  onOvershootClampingChange: (checked: boolean, index: number) => void;
+  onReverseChange: (checked: boolean, index: number) => void;
 }> = ({
   springConfigs,
-  draggedConfigs,
+  draggedConfig,
   onDampingChange,
   onMassChange,
   onStiffnessChange,
@@ -49,17 +49,17 @@ export const Sidebar: React.FC<{
           {springConfigs.map((config, idx) => {
             return (
               <SpringControls
-                mass={draggedConfigs[idx]?.mass ?? config.mass}
-                damping={draggedConfigs[idx]?.damping ?? config.damping}
-                stiffness={draggedConfigs[idx]?.stiffness ?? config.stiffness}
+                key={idx}
+                mass={draggedConfig?.mass ?? config.mass}
+                damping={draggedConfig?.damping ?? config.damping}
+                stiffness={draggedConfig?.stiffness ?? config.stiffness}
                 overshootClamping={config.overshootClamping}
                 index={idx}
                 fixedDurationInFrames={
-                  draggedConfigs[idx]?.durationInFrames ??
-                  config.durationInFrames
+                  draggedConfig?.durationInFrames ?? config.durationInFrames
                 }
                 reverse={config.reverse}
-                delay={draggedConfigs[idx]?.delay ?? config.delay}
+                delay={draggedConfig?.delay ?? config.delay}
                 calculatedDurationInFrames={calculatedDurationInFrames}
                 onMassChange={onMassChange}
                 onDampingChange={onDampingChange}

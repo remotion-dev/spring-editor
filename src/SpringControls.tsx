@@ -1,4 +1,4 @@
-import { Slider } from "@radix-ui/react-slider";
+import { Slider } from "./components/ui/slider";
 import { Spacing } from "./Spacing";
 import { SliderLabel } from "./SliderLabel";
 import { CheckboxWithLabel } from "./Checkbox";
@@ -10,14 +10,14 @@ export const SpringControls: React.FC<{
   damping: number;
   overshootClamping: boolean;
   reverse: boolean;
-  onMassChange: (e: [number], index: number) => void;
-  onDampingChange: (e: [number]) => void;
-  onStiffnessChange: (e: [number]) => void;
-  onDurationInFramesChange: (e: number | null) => void;
-  onDelayChange: (e: number) => void;
-  onRelease: () => void;
-  onOvershootClampingChange: (checked: boolean) => void;
-  onReverseChange: (checked: boolean) => void;
+  onMassChange: (e: number[], index: number) => void;
+  onDampingChange: (e: number[], index: number) => void;
+  onStiffnessChange: (e: number[], index: number) => void;
+  onDurationInFramesChange: (e: number | null, index: number) => void;
+  onDelayChange: (e: number, index: number) => void;
+  onRelease: (index: number) => void;
+  onOvershootClampingChange: (checked: boolean, index: number) => void;
+  onReverseChange: (checked: boolean, index: number) => void;
   fixedDurationInFrames: number | null;
   calculatedDurationInFrames: number;
   index: number;
@@ -48,24 +48,24 @@ export const SpringControls: React.FC<{
         min={0.3}
         step={0.1}
         max={10}
-        onValueChange={() => onMassChange([mass], index)} // CHANGE 0 TO IDX
-        onPointerUp={onRelease}
+        onValueChange={(e) => onMassChange(e, index)}
+        onPointerUp={() => onRelease(index)}
       />
       <SliderLabel label="mass" value={mass} toggleable={null} />
       <Slider
         min={1}
         max={200}
         value={[damping]}
-        onValueChange={onDampingChange}
-        onPointerUp={onRelease}
+        onValueChange={(e) => onDampingChange(e, index)}
+        onPointerUp={() => onRelease(index)}
       />
       <SliderLabel label="damping" value={damping} toggleable={null} />
       <Slider
         min={1}
         max={200}
         value={[stiffness]}
-        onValueChange={onStiffnessChange}
-        onPointerUp={onRelease}
+        onValueChange={(e) => onStiffnessChange(e, index)}
+        onPointerUp={() => onRelease(index)}
       />
       <SliderLabel toggleable={null} label="stiffness" value={stiffness} />
       <Slider
@@ -73,9 +73,9 @@ export const SpringControls: React.FC<{
         max={400}
         value={[delay]}
         onValueChange={(val) => {
-          onDelayChange(val[0]);
+          onDelayChange(val[0], index);
         }}
-        onPointerUp={onRelease}
+        onPointerUp={() => onRelease(index)}
       />
       <SliderLabel label="delay" toggleable={null} value={delay} />
       <>
@@ -85,17 +85,17 @@ export const SpringControls: React.FC<{
           value={[fixedDurationInFrames ?? calculatedDurationInFrames]}
           style={{ opacity: fixedDurationInFrames === null ? 0.5 : 1 }}
           onValueChange={(val) => {
-            onDurationInFramesChange(val[0]);
+            onDurationInFramesChange(val[0], index);
           }}
-          onPointerUp={onRelease}
+          onPointerUp={() => onRelease(index)}
         />
         <SliderLabel
           label="durationInFrames"
           toggleable={(enabled) => {
             if (enabled) {
-              onDurationInFramesChange(calculatedDurationInFrames);
+              onDurationInFramesChange(calculatedDurationInFrames, index);
             } else {
-              onDurationInFramesChange(null);
+              onDurationInFramesChange(null, index);
             }
           }}
           value={fixedDurationInFrames ?? null}
@@ -104,12 +104,12 @@ export const SpringControls: React.FC<{
       <CheckboxWithLabel
         checked={overshootClamping}
         id="overshootClamping"
-        onCheckedChange={onOvershootClampingChange}
+        onCheckedChange={(e) => onOvershootClampingChange(e, index)}
       />
       <CheckboxWithLabel
         checked={reverse}
         id="reverse"
-        onCheckedChange={onReverseChange}
+        onCheckedChange={(e) => onReverseChange(e, index)}
       />
       <Spacing y={2} />
     </>
