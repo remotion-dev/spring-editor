@@ -4,18 +4,22 @@ import { Canvas } from "./Canvas";
 import { DraggedConfig } from "./App";
 
 export const CanvasWrapper: React.FC<{
-  draggedConfig: DraggedConfig | null;
+  draggedConfigs: (DraggedConfig | null)[];
   draggedDuration: number | null;
   duration: number;
-  config: DraggedConfig;
+  springConfigs: DraggedConfig[];
   fps: number;
-}> = ({ config, draggedConfig, draggedDuration, duration, fps }) => {
+}> = ({ springConfigs, draggedConfigs, draggedDuration, duration, fps }) => {
   const outer = useRef<HTMLDivElement>(null);
 
   const elementSize = PlayerInternals.useElementSize(outer, {
     shouldApplyCssTransforms: false,
     triggerOnWindowResize: true,
   });
+
+  const addedConfigs = springConfigs.reduce(
+    (accumulated, currentConfig) => accumulated + currentConfig
+  );
 
   return (
     <div
