@@ -24,6 +24,7 @@ function App() {
       overshootClamping: false,
       reverse: false,
       durationInFrames: null,
+
       delay: 0,
     },
     {
@@ -37,59 +38,79 @@ function App() {
     },
   ]);
 
-  const [draggedConfig, setDraggedConfig] = useState<DraggedConfig | null>(
-    null
-  );
+  const [draggedConfigs, setDraggedConfigs] = useState<
+    (DraggedConfig | null)[]
+  >(Array(springConfigs.length).fill(null));
 
   const onMassChange = useCallback(
     (e: number[], index: number) => {
-      setDraggedConfig({
-        ...springConfigs[index],
-        mass: e[0],
-      });
+      setDraggedConfigs((old) => [
+        ...old.slice(0, index),
+        {
+          ...springConfigs[index],
+          mass: e[0],
+        },
+        ...old.slice(index + 1),
+      ]);
     },
     [springConfigs]
   );
   const onDampingChange = useCallback(
     (e: number[], index: number) => {
-      setDraggedConfig({
-        ...springConfigs[index],
-        damping: e[0],
-      });
+      setDraggedConfigs((old) => [
+        ...old.slice(0, index),
+        {
+          ...springConfigs[index],
+          damping: e[0],
+        },
+        ...old.slice(index + 1),
+      ]);
     },
     [springConfigs]
   );
 
   const onStiffnessChange = useCallback(
     (e: number[], index: number) => {
-      setDraggedConfig({
-        ...springConfigs[index],
-        stiffness: e[0],
-      });
+      setDraggedConfigs((old) => [
+        ...old.slice(0, index),
+        {
+          ...springConfigs[index],
+          stiffness: e[0],
+        },
+        ...old.slice(index + 1),
+      ]);
     },
     [springConfigs]
   );
 
   const onDurationInFramesChange = useCallback(
     (e: number | null, index: number) => {
-      setDraggedConfig({
-        ...springConfigs[index],
-        durationInFrames: e,
-      });
+      setDraggedConfigs((old) => [
+        ...old.slice(0, index),
+        {
+          ...springConfigs[index],
+          durationInFrames: e,
+        },
+        ...old.slice(index + 1),
+      ]);
     },
     [springConfigs]
   );
 
   const onDelayChange = useCallback(
     (e: number, index: number) => {
-      setDraggedConfig({
-        ...springConfigs[index],
-        delay: e,
-      });
-      setSpringConfigs([
-        ...springConfigs.slice(0, index),
-        { ...springConfigs[index], delay: e },
-        ...springConfigs.slice(index + 1),
+      setDraggedConfigs((old) => [
+        ...old.slice(0, index),
+        {
+          ...springConfigs[index],
+          delay: e,
+        },
+        ...old.slice(index + 1),
+      ]);
+      setSpringConfigs((old) => [
+        ...old.slice(0, index),
+        { ...old[index], delay: e },
+        ...old.slice(index + 1),
       ]);
     },
     [springConfigs]
@@ -97,14 +118,18 @@ function App() {
 
   const onOvershootClampingChange = useCallback(
     (checked: boolean, index: number) => {
-      setDraggedConfig({
-        ...springConfigs[index],
-        overshootClamping: checked,
-      });
-      setSpringConfigs([
-        ...springConfigs.slice(0, index),
-        { ...springConfigs[index], overshootClamping: checked },
-        ...springConfigs.slice(index + 1),
+      setDraggedConfigs((old) => [
+        ...old.slice(0, index),
+        {
+          ...springConfigs[index],
+          overshootClamping: checked,
+        },
+        ...old.slice(index + 1),
+      ]);
+      setSpringConfigs((old) => [
+        ...old.slice(0, index),
+        { ...old[index], overshootClamping: checked },
+        ...old.slice(index + 1),
       ]);
     },
     [springConfigs]
@@ -112,14 +137,18 @@ function App() {
 
   const onReverseChange = useCallback(
     (checked: boolean, index: number) => {
-      setDraggedConfig({
-        ...springConfigs[index],
-        reverse: checked,
-      });
-      setSpringConfigs([
-        ...springConfigs.slice(0, index),
-        { ...springConfigs[index], reverse: checked },
-        ...springConfigs.slice(index + 1),
+      setDraggedConfigs((old) => [
+        ...old.slice(0, index),
+        {
+          ...springConfigs[index],
+          reverse: checked,
+        },
+        ...old.slice(index + 1),
+      ]);
+      setSpringConfigs((old) => [
+        ...old.slice(0, index),
+        { ...old[index], reverse: checked },
+        ...old.slice(index + 1),
       ]);
     },
     [springConfigs]
@@ -127,16 +156,20 @@ function App() {
 
   const onRelease = useCallback(
     (index: number) => {
-      if (draggedConfig) {
-        setSpringConfigs([
-          ...springConfigs.slice(0, index),
-          draggedConfig as DraggedConfig,
-          ...springConfigs.slice(index + 1),
+      if (draggedConfigs && draggedConfigs[index]) {
+        setSpringConfigs((old) => [
+          ...old.slice(0, index),
+          draggedConfigs[index] as DraggedConfig,
+          ...old.slice(index + 1),
         ]);
       }
-      setDraggedConfig(null);
+      setDraggedConfigs((old) => [
+        ...old.slice(0, index),
+        null,
+        ...old.slice(index + 1),
+      ]);
     },
-    [draggedConfig, springConfigs]
+    [draggedConfigs]
   );
 
   const duration = springConfigs.reduce((max, config) => {
@@ -148,16 +181,20 @@ function App() {
     return calculatedDuration > max ? calculatedDuration : max;
   }, 0);
 
-  const draggedDuration = draggedConfig
-    ? draggedConfig.durationInFrames
-      ? draggedConfig.durationInFrames + draggedConfig.delay
-      : measureSpring({
-          fps,
-          threshold: 0.001,
-          config: draggedConfig,
-        }) + draggedConfig.delay
+  const draggedDuration = draggedConfigs.some((config) => config !== null)
+    ? draggedConfigs.reduce((max, draggedConfig) => {
+        if (draggedConfig === null) {
+          return max;
+        }
+        const calculatedDuration =
+          draggedConfig.delay +
+          (draggedConfig.durationInFrames
+            ? draggedConfig.durationInFrames
+            : measureSpring({ fps, threshold: 0.001, config: draggedConfig }));
+        return calculatedDuration > max ? calculatedDuration : max;
+      }, 0)
     : null;
-
+  console.log("duration:", duration);
   return (
     <div
       style={{
@@ -185,7 +222,7 @@ function App() {
         <div id="canvas">
           <CanvasWrapper
             springConfigs={springConfigs}
-            draggedConfig={draggedConfig}
+            draggedConfigs={draggedConfigs}
             draggedDuration={
               draggedDuration && draggedDuration > 0 ? draggedDuration : null
             }
@@ -200,7 +237,7 @@ function App() {
         </div>
         <Sidebar
           springConfigs={springConfigs}
-          draggedConfig={draggedConfig}
+          draggedConfigs={draggedConfigs}
           calculatedDurationInFrames={duration}
           onMassChange={onMassChange}
           onDampingChange={onDampingChange}

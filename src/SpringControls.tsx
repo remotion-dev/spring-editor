@@ -40,6 +40,7 @@ export const SpringControls: React.FC<{
   fixedDurationInFrames,
   index,
 }) => {
+  console.log(index);
   return (
     <>
       <Spacing y={3} />

@@ -17,7 +17,7 @@ export const draw = ({
   duration,
   fps,
   springConfigs,
-  draggedConfig,
+  draggedConfigs,
   draggedDuration,
   height,
   width,
@@ -27,24 +27,31 @@ export const draw = ({
   duration: number;
   fps: number;
   springConfigs: DraggedConfig[];
-  draggedConfig: DraggedConfig | null;
+  draggedConfigs: (DraggedConfig | null)[];
   draggedDuration: number | null;
   width: number;
   height: number;
   labelText: string;
 }) => {
   const context = ref.getContext("2d");
-
   if (!context) {
     return;
   }
   context.clearRect(0, 0, width, height);
   const trajectory = getTrajectory(duration, fps, springConfigs);
-  const draggedTrajectory = draggedConfig
-    ? getTrajectory(draggedDuration ?? duration, fps, [draggedConfig])
-    : [];
 
-  const max = draggedConfig
+  const hasSomeDragged = draggedConfigs.some(Boolean);
+
+  const draggedTrajectory = hasSomeDragged
+    ? getTrajectory(
+        draggedDuration ?? duration,
+        fps,
+        draggedConfigs as DraggedConfig[]
+      )
+    : [];
+  console.log("dragedConfigs", draggedConfigs);
+  console.log(trajectory);
+  const max = hasSomeDragged
     ? Math.max(...draggedTrajectory)
     : Math.max(...trajectory);
 
@@ -90,13 +97,14 @@ export const draw = ({
     canvasWidth: width,
     context,
     max,
-    primary: !draggedConfig,
-    animate: !draggedConfig,
+    primary: !hasSomeDragged, // Used to be !draggedConfig
+    animate: !hasSomeDragged,
     fps,
   });
   toStop.push(stopPrimary);
 
-  if (draggedConfig) {
+  if (hasSomeDragged) {
+    console.log(trajectory);
     toStop.push(
       drawTrajectory({
         springTrajectory: draggedTrajectory,

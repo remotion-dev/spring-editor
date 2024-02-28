@@ -8,7 +8,7 @@ const canvasRef = React.createRef<HTMLCanvasElement>();
 export const Canvas: React.FC<{
   width: number;
   height: number;
-  draggedConfig: DraggedConfig | null;
+  draggedConfigs: (DraggedConfig | null)[];
   draggedDuration: number | null;
   duration: number;
   springConfigs: DraggedConfig[];
@@ -16,7 +16,7 @@ export const Canvas: React.FC<{
 }> = ({
   height,
   width,
-  draggedConfig,
+  draggedConfigs,
   draggedDuration,
   springConfigs,
   duration,
@@ -33,6 +33,7 @@ export const Canvas: React.FC<{
   const [durationType, setDurationType] = React.useState<"seconds" | "frames">(
     "seconds"
   );
+  console.log("draggedDuration: ", draggedDuration, "duration: ", duration);
 
   const durationLabel =
     durationType === "seconds"
@@ -49,7 +50,7 @@ export const Canvas: React.FC<{
       ref: canvasRef.current,
       duration: draggedDuration ?? duration,
       springConfigs,
-      draggedConfig,
+      draggedConfigs,
       fps,
       draggedDuration,
       height,
@@ -59,7 +60,7 @@ export const Canvas: React.FC<{
   }, [
     draggedDuration,
     duration,
-    draggedConfig,
+    draggedConfigs,
     fps,
     width,
     height,
