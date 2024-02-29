@@ -69,6 +69,7 @@ export const Sidebar: React.FC<{
             onPointerUp={onRelease}
           />
           <SliderLabel label="mass" value={mass} toggleable={null} />
+          <br />
           <Slider
             min={1}
             max={200}
@@ -77,6 +78,7 @@ export const Sidebar: React.FC<{
             onPointerUp={onRelease}
           />
           <SliderLabel label="damping" value={damping} toggleable={null} />
+          <br />
           <Slider
             min={1}
             max={200}
@@ -85,6 +87,7 @@ export const Sidebar: React.FC<{
             onPointerUp={onRelease}
           />
           <SliderLabel toggleable={null} label="stiffness" value={stiffness} />
+          <br />
           <Slider
             min={0}
             max={400}
@@ -95,6 +98,7 @@ export const Sidebar: React.FC<{
             onPointerUp={onRelease}
           />
           <SliderLabel label="delay" toggleable={null} value={delay} />
+          <br />
           <>
             <Slider
               min={1}
@@ -118,6 +122,7 @@ export const Sidebar: React.FC<{
               value={fixedDurationInFrames ?? null}
             />
           </>
+          <br />
           <CheckboxWithLabel
             checked={overshootClamping}
             id="overshootClamping"
