@@ -17,7 +17,7 @@ export type ExtendedSpringConfig = SpringConfig & {
 
 export type DraggedConfig = {
   index: number;
-  configs: (ExtendedSpringConfig | null)[];
+  config: ExtendedSpringConfig | null;
 };
 
 const DEFAULT_SPRING = {
@@ -31,62 +31,45 @@ const DEFAULT_SPRING = {
 };
 
 function App() {
-  const [springConfigs, setSpringConfigs] = useState<ExtendedSpringConfig[]>([
-    DEFAULT_SPRING,
-  ]);
+  const initialConfig = window.localStorage.getItem("springConfigs")
+    ? JSON.parse(window.localStorage.getItem("springConfigs") as string)
+    : [DEFAULT_SPRING];
+  const [springConfigs, setSpringConfigs] =
+    useState<ExtendedSpringConfig[]>(initialConfig);
 
+  const updateLocalStorage = useCallback(() => {
+    window.localStorage.setItem("springConfigs", JSON.stringify(springConfigs));
+  }, [springConfigs]);
   const [draggedConfigs, setDraggedConfigs] = useState<DraggedConfig>({
     index: 0,
-    configs: Array(springConfigs.length).fill(null),
+    config: null,
   });
 
-  console.log(draggedConfigs.configs);
-
   const addSpring = useCallback(() => {
-    console.log("old.configs: ", draggedConfigs.configs);
     setSpringConfigs([...springConfigs, DEFAULT_SPRING]);
-    setDraggedConfigs((old) => ({
-      index: old.index,
-      configs: [...old.configs, null],
-    }));
-  }, [draggedConfigs.configs, springConfigs]);
+  }, [springConfigs]);
 
   const removeSpring = useCallback((index: number) => {
     setSpringConfigs((old) => [...old.splice(0, index), ...old.splice(index)]);
-    setDraggedConfigs((old) => ({
-      ...old,
-      configs: [...old.configs.splice(0, index), ...old.configs.splice(index)],
-    }));
   }, []);
 
   const onMassChange = useCallback(
     (e: number[], index: number) => {
-      setDraggedConfigs((old) => ({
+      setDraggedConfigs(() => ({
         index,
-        configs: [
-          ...old.configs.slice(0, index),
-          {
-            ...springConfigs[index],
-            mass: e[0],
-          },
-          ...old.configs.slice(index + 1),
-        ],
+        config: { ...springConfigs[index], mass: e[0] },
       }));
     },
     [springConfigs]
   );
   const onDampingChange = useCallback(
     (e: number[], index: number) => {
-      setDraggedConfigs((old) => ({
+      setDraggedConfigs(() => ({
         index,
-        configs: [
-          ...old.configs.slice(0, index),
-          {
-            ...springConfigs[index],
-            damping: e[0],
-          },
-          ...old.configs.slice(index + 1),
-        ],
+        config: {
+          ...springConfigs[index],
+          damping: e[0],
+        },
       }));
     },
     [springConfigs]
@@ -94,16 +77,12 @@ function App() {
 
   const onStiffnessChange = useCallback(
     (e: number[], index: number) => {
-      setDraggedConfigs((old) => ({
+      setDraggedConfigs(() => ({
         index,
-        configs: [
-          ...old.configs.slice(0, index),
-          {
-            ...springConfigs[index],
-            stiffness: e[0],
-          },
-          ...old.configs.slice(index + 1),
-        ],
+        config: {
+          ...springConfigs[index],
+          stiffness: e[0],
+        },
       }));
     },
     [springConfigs]
@@ -111,16 +90,12 @@ function App() {
 
   const onDurationInFramesChange = useCallback(
     (e: number | null, index: number) => {
-      setDraggedConfigs((old) => ({
-        ...old,
-        configs: [
-          ...old.configs.slice(0, index),
-          {
-            ...springConfigs[index],
-            durationInFrames: e,
-          },
-          ...old.configs.slice(index + 1),
-        ],
+      setDraggedConfigs(() => ({
+        index,
+        config: {
+          ...springConfigs[index],
+          durationInFrames: e,
+        },
       }));
 
       setSpringConfigs((old) => [
@@ -138,16 +113,12 @@ function App() {
 
   const onDelayChange = useCallback(
     (e: number, index: number) => {
-      setDraggedConfigs((old) => ({
+      setDraggedConfigs(() => ({
         index,
-        configs: [
-          ...old.configs.slice(0, index),
-          {
-            ...springConfigs[index],
-            delay: e,
-          },
-          ...old.configs.slice(index + 1),
-        ],
+        config: {
+          ...springConfigs[index],
+          delay: e,
+        },
       }));
       setSpringConfigs((old) => [
         ...old.slice(0, index),
@@ -179,23 +150,17 @@ function App() {
 
   const onRelease = useCallback(
     (index: number) => {
-      if (draggedConfigs && draggedConfigs.configs[index]) {
+      if (draggedConfigs && draggedConfigs.config) {
         setSpringConfigs((old) => [
           ...old.slice(0, index),
-          draggedConfigs.configs[index] as ExtendedSpringConfig,
+          draggedConfigs.config as ExtendedSpringConfig,
           ...old.slice(index + 1),
         ]);
       }
-      setDraggedConfigs((old) => ({
-        index: 0,
-        configs: [
-          ...old.configs.slice(0, index),
-          null,
-          ...old.configs.slice(index + 1),
-        ],
-      }));
+      setDraggedConfigs({ index: 0, config: null });
+      updateLocalStorage();
     },
-    [draggedConfigs]
+    [draggedConfigs, updateLocalStorage]
   );
 
   const duration = springConfigs.reduce((max, config) => {
@@ -207,21 +172,16 @@ function App() {
     return calculatedDuration > max ? calculatedDuration : max;
   }, 0);
 
-  const draggedDuration = draggedConfigs.configs.some(
-    (config) => config !== null
-  )
-    ? draggedConfigs.configs.reduce((max, draggedConfig) => {
-        if (draggedConfig === null) {
-          return max;
-        }
-        const calculatedDuration =
-          draggedConfig.delay +
-          (draggedConfig.durationInFrames
-            ? draggedConfig.durationInFrames
-            : measureSpring({ fps, threshold: 0.001, config: draggedConfig }));
-        return calculatedDuration > max ? calculatedDuration : max;
-      }, 0)
-    : null;
+  const draggedDuration =
+    // eslint-disable-next-line no-negated-condition
+    draggedConfigs.config !== null
+      ? measureSpring({
+          fps,
+          threshold: 0.001,
+          config: draggedConfigs.config,
+        })
+      : null;
+
   return (
     <div
       style={{

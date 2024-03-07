@@ -9,7 +9,6 @@ import {
 } from "./draw-trajectory";
 import { DraggedConfig, ExtendedSpringConfig } from "./App";
 import { measureText } from "@remotion/layout-utils";
-import { totalmem } from "os";
 
 export let stopDrawing = () => {};
 
@@ -41,12 +40,12 @@ export const draw = ({
   context.clearRect(0, 0, width, height);
   const trajectory = getTrajectory(duration, fps, springConfigs);
 
-  const hasSomeDragged = draggedConfigs.configs.some(Boolean);
+  const hasSomeDragged = draggedConfigs.config !== null;
 
   const currentIdx = draggedConfigs.index;
   const draggedConfigsToDraw = [
     ...springConfigs.slice(0, currentIdx),
-    draggedConfigs.configs[currentIdx],
+    draggedConfigs.config,
     ...springConfigs.slice(currentIdx + 1),
   ];
 

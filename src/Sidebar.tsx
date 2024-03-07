@@ -58,21 +58,19 @@ export const Sidebar: React.FC<{
               return (
                 <SpringControls
                   key={idx}
-                  mass={draggedConfigs.configs[idx]?.mass ?? config.mass}
-                  damping={
-                    draggedConfigs.configs[idx]?.damping ?? config.damping
-                  }
+                  mass={draggedConfigs.config?.mass ?? config.mass}
+                  damping={draggedConfigs.config?.damping ?? config.damping}
                   stiffness={
-                    draggedConfigs.configs[idx]?.stiffness ?? config.stiffness
+                    draggedConfigs.config?.stiffness ?? config.stiffness
                   }
                   overshootClamping={config.overshootClamping}
                   index={idx}
                   fixedDurationInFrames={
-                    draggedConfigs.configs[idx]?.durationInFrames ??
+                    draggedConfigs.config?.durationInFrames ??
                     config.durationInFrames
                   }
                   reverse={config.reverse}
-                  delay={draggedConfigs.configs[idx]?.delay ?? config.delay}
+                  delay={draggedConfigs.config?.delay ?? config.delay}
                   calculatedDurationInFrames={calculatedDurationInFrames}
                   removeSpring={removeSpring}
                   onMassChange={onMassChange}
