@@ -93,15 +93,7 @@ export const Sidebar: React.FC<{
           </>
         </TabsContent>
         <TabsContent value="code">
-          <CodeFrameTabs
-            delay={springConfigs[0].delay}
-            damping={springConfigs[0].damping}
-            mass={springConfigs[0].mass}
-            stiffness={springConfigs[0].stiffness}
-            overshotClamping={springConfigs[0].overshootClamping}
-            reverse={springConfigs[0].reverse}
-            durationInFrames={springConfigs[0].durationInFrames}
-          />
+          <CodeFrameTabs springConfigs={springConfigs} />
         </TabsContent>
       </Tabs>
     </div>

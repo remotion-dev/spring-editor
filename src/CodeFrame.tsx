@@ -6,6 +6,7 @@ import { Button } from "./components/ui/button";
 import { Spacing } from "./Spacing";
 import { copyText } from "./copy-text";
 import toast, { Toaster } from "react-hot-toast";
+import { ExtendedSpringConfig } from "./App";
 
 type Props = {
   damping: number;
@@ -17,6 +18,7 @@ type Props = {
   reverse: boolean;
   durationInFrames: number | null;
   delay: number;
+  index: number;
 };
 
 const CodeFrame: React.FC<
@@ -32,6 +34,7 @@ const CodeFrame: React.FC<
   platform,
   durationInFrames,
   delay,
+  index,
 }) => {
   const [h, setH] = useState<string | null>(null);
 
@@ -44,7 +47,7 @@ const CodeFrame: React.FC<
       isDefaultDamping && isDefaultMass && isDefaultStiffness;
 
     const lines = [
-      "const spr = spring({",
+      `const spr${index + 1} = spring({`,
       platform === "remotion" ? "  frame," : null,
       platform === "remotion" ? "  fps," : null,
       platform === "reanimated" ? "  toValue: 1," : null,
@@ -68,6 +71,7 @@ const CodeFrame: React.FC<
     damping,
     mass,
     stiffness,
+    index,
     platform,
     durationInFrames,
     delay,
@@ -120,7 +124,9 @@ const CodeFrame: React.FC<
   );
 };
 
-export function CodeFrameTabs(props: Props) {
+export function CodeFrameTabs(props: {
+  springConfigs: ExtendedSpringConfig[];
+}) {
   return (
     <Tabs defaultValue="remotion">
       <TabsList className="grid w-full grid-cols-2">
@@ -128,10 +134,38 @@ export function CodeFrameTabs(props: Props) {
         <TabsTrigger value="reanimated">Reanimated</TabsTrigger>
       </TabsList>
       <TabsContent value="remotion">
-        <CodeFrame platform="remotion" {...props} />
+        {props.springConfigs.map((config, i) => {
+          return (
+            <CodeFrame
+              platform="remotion"
+              delay={config.delay}
+              damping={config.damping}
+              mass={config.mass}
+              stiffness={config.stiffness}
+              overshotClamping={config.overshootClamping}
+              reverse={config.reverse}
+              durationInFrames={config.durationInFrames}
+              index={i}
+            />
+          );
+        })}
       </TabsContent>
       <TabsContent value="reanimated">
-        <CodeFrame platform="reanimated" {...props} />
+        {props.springConfigs.map((config, i) => {
+          return (
+            <CodeFrame
+              platform="reanimated"
+              delay={config.delay}
+              damping={config.damping}
+              mass={config.mass}
+              stiffness={config.stiffness}
+              overshotClamping={config.overshootClamping}
+              reverse={config.reverse}
+              durationInFrames={config.durationInFrames}
+              index={i}
+            />
+          );
+        })}
       </TabsContent>
     </Tabs>
   );
