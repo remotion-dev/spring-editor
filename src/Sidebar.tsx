@@ -38,6 +38,7 @@ export const Sidebar: React.FC<{
         display: "flex",
         flexDirection: "column",
         borderLeft: "1px solid #242424",
+        overflow: "scroll",
       }}
     >
       <Tabs defaultValue="configuration">

@@ -51,7 +51,7 @@ function App() {
   const onMassChange = useCallback(
     (e: number[], index: number) => {
       setDraggedConfigs((old) => ({
-        ...old,
+        index,
         configs: [
           ...old.configs.slice(0, index),
           {
@@ -67,7 +67,7 @@ function App() {
   const onDampingChange = useCallback(
     (e: number[], index: number) => {
       setDraggedConfigs((old) => ({
-        ...old,
+        index,
         configs: [
           ...old.configs.slice(0, index),
           {
@@ -84,7 +84,7 @@ function App() {
   const onStiffnessChange = useCallback(
     (e: number[], index: number) => {
       setDraggedConfigs((old) => ({
-        ...old,
+        index,
         configs: [
           ...old.configs.slice(0, index),
           {
@@ -111,14 +111,24 @@ function App() {
           ...old.configs.slice(index + 1),
         ],
       }));
+
+      setSpringConfigs((old) => [
+        ...old.slice(0, index),
+        {
+          ...springConfigs[index],
+          durationInFrames: e,
+        },
+        ...old.slice(index + 1),
+      ]);
     },
+
     [springConfigs]
   );
 
   const onDelayChange = useCallback(
     (e: number, index: number) => {
       setDraggedConfigs((old) => ({
-        ...old,
+        index,
         configs: [
           ...old.configs.slice(0, index),
           {
@@ -139,47 +149,22 @@ function App() {
 
   const onOvershootClampingChange = useCallback(
     (checked: boolean, index: number) => {
-      setDraggedConfigs((old) => ({
-        ...old,
-        configs: [
-          ...old.configs.slice(0, index),
-          {
-            ...springConfigs[index],
-            overshootClamping: checked,
-          },
-          ...old.configs.slice(index + 1),
-        ],
-      }));
       setSpringConfigs((old) => [
         ...old.slice(0, index),
         { ...old[index], overshootClamping: checked },
         ...old.slice(index + 1),
       ]);
     },
-    [springConfigs]
+    []
   );
 
-  const onReverseChange = useCallback(
-    (checked: boolean, index: number) => {
-      setDraggedConfigs((old) => ({
-        ...old,
-        configs: [
-          ...old.configs.slice(0, index),
-          {
-            ...springConfigs[index],
-            reverse: checked,
-          },
-          ...old.configs.slice(index + 1),
-        ],
-      }));
-      setSpringConfigs((old) => [
-        ...old.slice(0, index),
-        { ...old[index], reverse: checked },
-        ...old.slice(index + 1),
-      ]);
-    },
-    [springConfigs]
-  );
+  const onReverseChange = useCallback((checked: boolean, index: number) => {
+    setSpringConfigs((old) => [
+      ...old.slice(0, index),
+      { ...old[index], reverse: checked },
+      ...old.slice(index + 1),
+    ]);
+  }, []);
 
   const onRelease = useCallback(
     (index: number) => {
