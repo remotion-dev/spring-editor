@@ -9,14 +9,19 @@ import { Header } from "./Header";
 
 const fps = 60;
 
-export type DraggedConfig = SpringConfig & {
+export type ExtendedSpringConfig = SpringConfig & {
   reverse: boolean;
   durationInFrames: number | null;
   delay: number;
 };
 
+export type DraggedConfig = {
+  index: number;
+  configs: (ExtendedSpringConfig | null)[];
+};
+
 function App() {
-  const [springConfigs, setSpringConfigs] = useState<DraggedConfig[]>([
+  const [springConfigs, setSpringConfigs] = useState<ExtendedSpringConfig[]>([
     {
       damping: DEFAULT_DAMPING,
       mass: DEFAULT_MASS,
@@ -38,75 +43,91 @@ function App() {
     },
   ]);
 
-  const [draggedConfigs, setDraggedConfigs] = useState<
-    (DraggedConfig | null)[]
-  >(Array(springConfigs.length).fill(null));
+  const [draggedConfigs, setDraggedConfigs] = useState<DraggedConfig>({
+    index: 0,
+    configs: Array(springConfigs.length).fill(null),
+  });
 
   const onMassChange = useCallback(
     (e: number[], index: number) => {
-      setDraggedConfigs((old) => [
-        ...old.slice(0, index),
-        {
-          ...springConfigs[index],
-          mass: e[0],
-        },
-        ...old.slice(index + 1),
-      ]);
+      setDraggedConfigs((old) => ({
+        ...old,
+        configs: [
+          ...old.configs.slice(0, index),
+          {
+            ...springConfigs[index],
+            mass: e[0],
+          },
+          ...old.configs.slice(index + 1),
+        ],
+      }));
     },
     [springConfigs]
   );
   const onDampingChange = useCallback(
     (e: number[], index: number) => {
-      setDraggedConfigs((old) => [
-        ...old.slice(0, index),
-        {
-          ...springConfigs[index],
-          damping: e[0],
-        },
-        ...old.slice(index + 1),
-      ]);
+      setDraggedConfigs((old) => ({
+        ...old,
+        configs: [
+          ...old.configs.slice(0, index),
+          {
+            ...springConfigs[index],
+            damping: e[0],
+          },
+          ...old.configs.slice(index + 1),
+        ],
+      }));
     },
     [springConfigs]
   );
 
   const onStiffnessChange = useCallback(
     (e: number[], index: number) => {
-      setDraggedConfigs((old) => [
-        ...old.slice(0, index),
-        {
-          ...springConfigs[index],
-          stiffness: e[0],
-        },
-        ...old.slice(index + 1),
-      ]);
+      setDraggedConfigs((old) => ({
+        ...old,
+        configs: [
+          ...old.configs.slice(0, index),
+          {
+            ...springConfigs[index],
+            stiffness: e[0],
+          },
+          ...old.configs.slice(index + 1),
+        ],
+      }));
     },
     [springConfigs]
   );
 
   const onDurationInFramesChange = useCallback(
     (e: number | null, index: number) => {
-      setDraggedConfigs((old) => [
-        ...old.slice(0, index),
-        {
-          ...springConfigs[index],
-          durationInFrames: e,
-        },
-        ...old.slice(index + 1),
-      ]);
+      setDraggedConfigs((old) => ({
+        ...old,
+        configs: [
+          ...old.configs.slice(0, index),
+          {
+            ...springConfigs[index],
+            durationInFrames: e,
+          },
+          ...old.configs.slice(index + 1),
+        ],
+      }));
     },
     [springConfigs]
   );
 
   const onDelayChange = useCallback(
     (e: number, index: number) => {
-      setDraggedConfigs((old) => [
-        ...old.slice(0, index),
-        {
-          ...springConfigs[index],
-          delay: e,
-        },
-        ...old.slice(index + 1),
-      ]);
+      setDraggedConfigs((old) => ({
+        ...old,
+        configs: [
+          ...old.configs.slice(0, index),
+          {
+            ...springConfigs[index],
+            delay: e,
+          },
+          ...old.configs.slice(index + 1),
+        ],
+      }));
       setSpringConfigs((old) => [
         ...old.slice(0, index),
         { ...old[index], delay: e },
@@ -118,14 +139,17 @@ function App() {
 
   const onOvershootClampingChange = useCallback(
     (checked: boolean, index: number) => {
-      setDraggedConfigs((old) => [
-        ...old.slice(0, index),
-        {
-          ...springConfigs[index],
-          overshootClamping: checked,
-        },
-        ...old.slice(index + 1),
-      ]);
+      setDraggedConfigs((old) => ({
+        ...old,
+        configs: [
+          ...old.configs.slice(0, index),
+          {
+            ...springConfigs[index],
+            overshootClamping: checked,
+          },
+          ...old.configs.slice(index + 1),
+        ],
+      }));
       setSpringConfigs((old) => [
         ...old.slice(0, index),
         { ...old[index], overshootClamping: checked },
@@ -137,14 +161,17 @@ function App() {
 
   const onReverseChange = useCallback(
     (checked: boolean, index: number) => {
-      setDraggedConfigs((old) => [
-        ...old.slice(0, index),
-        {
-          ...springConfigs[index],
-          reverse: checked,
-        },
-        ...old.slice(index + 1),
-      ]);
+      setDraggedConfigs((old) => ({
+        ...old,
+        configs: [
+          ...old.configs.slice(0, index),
+          {
+            ...springConfigs[index],
+            reverse: checked,
+          },
+          ...old.configs.slice(index + 1),
+        ],
+      }));
       setSpringConfigs((old) => [
         ...old.slice(0, index),
         { ...old[index], reverse: checked },
@@ -156,18 +183,21 @@ function App() {
 
   const onRelease = useCallback(
     (index: number) => {
-      if (draggedConfigs && draggedConfigs[index]) {
+      if (draggedConfigs && draggedConfigs.configs[index]) {
         setSpringConfigs((old) => [
           ...old.slice(0, index),
-          draggedConfigs[index] as DraggedConfig,
+          draggedConfigs.configs[index] as ExtendedSpringConfig,
           ...old.slice(index + 1),
         ]);
       }
-      setDraggedConfigs((old) => [
-        ...old.slice(0, index),
-        null,
-        ...old.slice(index + 1),
-      ]);
+      setDraggedConfigs((old) => ({
+        index: 0,
+        configs: [
+          ...old.configs.slice(0, index),
+          null,
+          ...old.configs.slice(index + 1),
+        ],
+      }));
     },
     [draggedConfigs]
   );
@@ -181,8 +211,10 @@ function App() {
     return calculatedDuration > max ? calculatedDuration : max;
   }, 0);
 
-  const draggedDuration = draggedConfigs.some((config) => config !== null)
-    ? draggedConfigs.reduce((max, draggedConfig) => {
+  const draggedDuration = draggedConfigs.configs.some(
+    (config) => config !== null
+  )
+    ? draggedConfigs.configs.reduce((max, draggedConfig) => {
         if (draggedConfig === null) {
           return max;
         }

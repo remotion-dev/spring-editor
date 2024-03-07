@@ -1,13 +1,13 @@
 import { PlayerInternals } from "@remotion/player";
 import { useRef } from "react";
 import { Canvas } from "./Canvas";
-import { DraggedConfig } from "./App";
+import { DraggedConfig, ExtendedSpringConfig } from "./App";
 
 export const CanvasWrapper: React.FC<{
-  draggedConfigs: (DraggedConfig | null)[];
+  draggedConfigs: DraggedConfig;
   draggedDuration: number | null;
   duration: number;
-  springConfigs: DraggedConfig[];
+  springConfigs: ExtendedSpringConfig[];
   fps: number;
 }> = ({ springConfigs, draggedConfigs, draggedDuration, duration, fps }) => {
   const outer = useRef<HTMLDivElement>(null);

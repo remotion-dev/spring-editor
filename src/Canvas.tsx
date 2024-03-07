@@ -1,6 +1,6 @@
 import React, { useEffect, useMemo } from "react";
 import { draw, stopDrawing } from "./draw";
-import { DraggedConfig } from "./App";
+import { DraggedConfig, ExtendedSpringConfig } from "./App";
 import { AnimationDuration } from "./AnimationDuration";
 
 const canvasRef = React.createRef<HTMLCanvasElement>();
@@ -8,10 +8,10 @@ const canvasRef = React.createRef<HTMLCanvasElement>();
 export const Canvas: React.FC<{
   width: number;
   height: number;
-  draggedConfigs: (DraggedConfig | null)[];
+  draggedConfigs: DraggedConfig;
   draggedDuration: number | null;
   duration: number;
-  springConfigs: DraggedConfig[];
+  springConfigs: ExtendedSpringConfig[];
   fps: number;
 }> = ({
   height,

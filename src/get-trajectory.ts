@@ -1,10 +1,10 @@
 import { spring } from "remotion";
-import { DraggedConfig } from "./App";
+import { ExtendedSpringConfig } from "./App";
 
 export const getTrajectory = (
   durationInFrames: number,
   fps: number,
-  springConfigs: (DraggedConfig | null)[]
+  springConfigs: (ExtendedSpringConfig | null)[]
 ) => {
   return new Array(durationInFrames).fill(true).map((_, i) => {
     let totalValue = 0;

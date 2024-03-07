@@ -2,12 +2,12 @@ import React from "react";
 import { CodeFrameTabs } from "./CodeFrame";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "./components/ui/tabs";
 import { PADDING_LEFT } from "./draw-trajectory";
-import { DraggedConfig } from "./App";
+import { DraggedConfig, ExtendedSpringConfig } from "./App";
 import { SpringControls } from "./SpringControls";
 
 export const Sidebar: React.FC<{
-  springConfigs: DraggedConfig[];
-  draggedConfigs: (DraggedConfig | null)[];
+  springConfigs: ExtendedSpringConfig[];
+  draggedConfigs: DraggedConfig;
   calculatedDurationInFrames: number;
   onMassChange: (e: number[], index: number) => void;
   onDampingChange: (e: number[], index: number) => void;
@@ -50,17 +50,19 @@ export const Sidebar: React.FC<{
             return (
               <SpringControls
                 key={idx}
-                mass={draggedConfigs[idx]?.mass ?? config.mass}
-                damping={draggedConfigs[idx]?.damping ?? config.damping}
-                stiffness={draggedConfigs[idx]?.stiffness ?? config.stiffness}
+                mass={draggedConfigs.configs[idx]?.mass ?? config.mass}
+                damping={draggedConfigs.configs[idx]?.damping ?? config.damping}
+                stiffness={
+                  draggedConfigs.configs[idx]?.stiffness ?? config.stiffness
+                }
                 overshootClamping={config.overshootClamping}
                 index={idx}
                 fixedDurationInFrames={
-                  draggedConfigs[idx]?.durationInFrames ??
+                  draggedConfigs.configs[idx]?.durationInFrames ??
                   config.durationInFrames
                 }
                 reverse={config.reverse}
-                delay={draggedConfigs[idx]?.delay ?? config.delay}
+                delay={draggedConfigs.configs[idx]?.delay ?? config.delay}
                 calculatedDurationInFrames={calculatedDurationInFrames}
                 onMassChange={onMassChange}
                 onDampingChange={onDampingChange}

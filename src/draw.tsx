@@ -7,7 +7,7 @@ import {
   PADDING_TOP,
   drawTrajectory,
 } from "./draw-trajectory";
-import { DraggedConfig } from "./App";
+import { DraggedConfig, ExtendedSpringConfig } from "./App";
 import { measureText } from "@remotion/layout-utils";
 
 export let stopDrawing = () => {};
@@ -26,8 +26,8 @@ export const draw = ({
   ref: HTMLCanvasElement;
   duration: number;
   fps: number;
-  springConfigs: DraggedConfig[];
-  draggedConfigs: (DraggedConfig | null)[];
+  springConfigs: ExtendedSpringConfig[];
+  draggedConfigs: DraggedConfig;
   draggedDuration: number | null;
   width: number;
   height: number;
@@ -40,13 +40,20 @@ export const draw = ({
   context.clearRect(0, 0, width, height);
   const trajectory = getTrajectory(duration, fps, springConfigs);
 
-  const hasSomeDragged = draggedConfigs.some(Boolean);
+  const hasSomeDragged = draggedConfigs.configs.some(Boolean);
+
+  const currentIdx = draggedConfigs.index;
+  const draggedConfigsToDraw = [
+    ...springConfigs.slice(0, currentIdx),
+    draggedConfigs.configs[currentIdx],
+    ...springConfigs.slice(currentIdx + 1),
+  ];
 
   const draggedTrajectory = hasSomeDragged
     ? getTrajectory(
         draggedDuration ?? duration,
         fps,
-        draggedConfigs as DraggedConfig[]
+        draggedConfigsToDraw as ExtendedSpringConfig[]
       )
     : [];
   const max = hasSomeDragged
