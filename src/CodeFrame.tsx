@@ -8,76 +8,51 @@ import { copyText } from "./copy-text";
 import toast, { Toaster } from "react-hot-toast";
 import { ExtendedSpringConfig } from "./App";
 
-type Props = {
-  damping: number;
-  mass: number;
-  stiffness: number;
-  // eslint-disable-next-line react/boolean-prop-naming
-  overshotClamping: boolean;
-  // eslint-disable-next-line react/boolean-prop-naming
-  reverse: boolean;
-  durationInFrames: number | null;
-  delay: number;
-  index: number;
-};
-
-const CodeFrame: React.FC<
-  Props & {
-    platform: "remotion" | "reanimated";
-  }
-> = ({
-  damping,
-  mass,
-  stiffness,
-  overshotClamping,
-  reverse,
-  platform,
-  durationInFrames,
-  delay,
-  index,
-}) => {
+const CodeFrame: React.FC<{
+  springConfigs: ExtendedSpringConfig[];
+  platform: "remotion" | "reanimated";
+}> = ({ springConfigs, platform }) => {
   const [h, setH] = useState<string | null>(null);
 
   const code = useMemo(() => {
-    const isDefaultDamping = DEFAULT_DAMPING === damping;
-    const isDefaultMass = DEFAULT_MASS === mass;
-    const isDefaultStiffness = DEFAULT_STIFFNESS === stiffness;
+    const allLines: string[] = [];
 
-    const isAllDefault =
-      isDefaultDamping && isDefaultMass && isDefaultStiffness;
+    springConfigs.forEach((config, index) => {
+      const isDefaultDamping = DEFAULT_DAMPING === config.damping;
+      const isDefaultMass = DEFAULT_MASS === config.mass;
+      const isDefaultStiffness = DEFAULT_STIFFNESS === config.stiffness;
 
-    const lines = [
-      `const spr${index + 1} = spring({`,
-      platform === "remotion" ? "  frame," : null,
-      platform === "remotion" ? "  fps," : null,
-      platform === "reanimated" ? "  toValue: 1," : null,
-      isAllDefault ? null : "  config: {",
-      isDefaultDamping ? null : `    damping: ${damping}`,
-      isDefaultMass ? null : `    mass: ${mass}`,
-      isDefaultStiffness ? null : `    stiffness: ${stiffness}`,
-      isAllDefault ? null : "  },",
-      durationInFrames === null || platform === "reanimated"
-        ? null
-        : `  durationInFrames: ${durationInFrames},`,
-      delay === 0 || platform === "reanimated" ? 0 : `  delay: ${delay},`,
-      overshotClamping ? "  overshootClamping: true," : null,
-      reverse ? "  reverse: true," : null,
-      "});",
-    ]
-      .filter(Boolean)
-      .join("\n");
-    return lines;
-  }, [
-    damping,
-    mass,
-    stiffness,
-    index,
-    platform,
-    durationInFrames,
-    delay,
-    overshotClamping,
-    reverse,
-  ]);
+      const isAllDefault =
+        isDefaultDamping && isDefaultMass && isDefaultStiffness;
+
+      const lines = [
+        `const spr${index + 1} = spring({`,
+        platform === "remotion" ? "  frame," : null,
+        platform === "remotion" ? "  fps," : null,
+        platform === "reanimated" ? "  toValue: 1," : null,
+        isAllDefault ? null : "  config: {",
+        isDefaultDamping ? null : `    damping: ${config.damping}`,
+        isDefaultMass ? null : `    mass: ${config.mass}`,
+        isDefaultStiffness ? null : `    stiffness: ${config.stiffness}`,
+        isAllDefault ? null : "  },",
+        config.durationInFrames === null || platform === "reanimated"
+          ? null
+          : `  durationInFrames: ${config.durationInFrames},`,
+        config.delay === 0 || platform === "reanimated"
+          ? 0
+          : `  delay: ${config.delay},`,
+        config.overshootClamping ? "  overshootClamping: true," : null,
+        config.reverse ? "  reverse: true," : null,
+        "});",
+      ]
+        .filter(Boolean)
+        .join("\n");
+
+      allLines.push(lines);
+    });
+
+    return allLines.join("\n\n");
+  }, [springConfigs, platform]);
 
   useEffect(() => {
     codeToHtml(code, {
@@ -104,7 +79,6 @@ const CodeFrame: React.FC<
           backgroundColor: "#24292E",
           paddingTop: 14,
           paddingLeft: 20,
-          height: 300,
           borderRadius: 8,
         }}
       >
@@ -134,38 +108,10 @@ export function CodeFrameTabs(props: {
         <TabsTrigger value="reanimated">Reanimated</TabsTrigger>
       </TabsList>
       <TabsContent value="remotion">
-        {props.springConfigs.map((config, i) => {
-          return (
-            <CodeFrame
-              platform="remotion"
-              delay={config.delay}
-              damping={config.damping}
-              mass={config.mass}
-              stiffness={config.stiffness}
-              overshotClamping={config.overshootClamping}
-              reverse={config.reverse}
-              durationInFrames={config.durationInFrames}
-              index={i}
-            />
-          );
-        })}
+        <CodeFrame platform="remotion" springConfigs={props.springConfigs} />
       </TabsContent>
       <TabsContent value="reanimated">
-        {props.springConfigs.map((config, i) => {
-          return (
-            <CodeFrame
-              platform="reanimated"
-              delay={config.delay}
-              damping={config.damping}
-              mass={config.mass}
-              stiffness={config.stiffness}
-              overshotClamping={config.overshootClamping}
-              reverse={config.reverse}
-              durationInFrames={config.durationInFrames}
-              index={i}
-            />
-          );
-        })}
+        <CodeFrame platform="reanimated" springConfigs={props.springConfigs} />
       </TabsContent>
     </Tabs>
   );
