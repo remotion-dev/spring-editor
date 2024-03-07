@@ -9,6 +9,7 @@ import {
 } from "./draw-trajectory";
 import { DraggedConfig, ExtendedSpringConfig } from "./App";
 import { measureText } from "@remotion/layout-utils";
+import { totalmem } from "os";
 
 export let stopDrawing = () => {};
 
@@ -95,7 +96,6 @@ export const draw = ({
   context.closePath();
 
   const toStop: (() => void)[] = [];
-
   const stopPrimary = drawTrajectory({
     springTrajectory: trajectory,
     canvasHeight: height,
@@ -106,6 +106,7 @@ export const draw = ({
     animate: !hasSomeDragged,
     fps,
   });
+
   toStop.push(stopPrimary);
 
   if (hasSomeDragged) {

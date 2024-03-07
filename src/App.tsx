@@ -40,14 +40,15 @@ function App() {
     configs: Array(springConfigs.length).fill(null),
   });
 
+  console.log(draggedConfigs.configs);
+
   const addSpring = useCallback(() => {
+    console.log("old.configs: ", draggedConfigs.configs);
     setSpringConfigs([...springConfigs, DEFAULT_SPRING]);
     setDraggedConfigs((old) => ({
-      ...old,
+      index: old.index,
       configs: [...old.configs, null],
     }));
-    springConfigs.push(DEFAULT_SPRING);
-    draggedConfigs.configs.push(DEFAULT_SPRING);
   }, [draggedConfigs.configs, springConfigs]);
 
   const removeSpring = useCallback((index: number) => {
