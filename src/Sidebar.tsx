@@ -4,11 +4,15 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from "./components/ui/tabs";
 import { PADDING_LEFT } from "./draw-trajectory";
 import { DraggedConfig, ExtendedSpringConfig } from "./App";
 import { SpringControls } from "./SpringControls";
+import { Button } from "./components/ui/button";
+import { Spacing } from "./Spacing";
 
 export const Sidebar: React.FC<{
   springConfigs: ExtendedSpringConfig[];
   draggedConfigs: DraggedConfig;
   calculatedDurationInFrames: number;
+  addSpring: () => void;
+  removeSpring: (index: number) => void;
   onMassChange: (e: number[], index: number) => void;
   onDampingChange: (e: number[], index: number) => void;
   onStiffnessChange: (e: number[], index: number) => void;
@@ -29,6 +33,8 @@ export const Sidebar: React.FC<{
   onOvershootClampingChange,
   onReverseChange,
   onDelayChange,
+  addSpring,
+  removeSpring,
 }) => {
   return (
     <div
@@ -47,35 +53,44 @@ export const Sidebar: React.FC<{
           <TabsTrigger value="code">Code</TabsTrigger>
         </TabsList>
         <TabsContent value="configuration">
-          {springConfigs.map((config, idx) => {
-            return (
-              <SpringControls
-                key={idx}
-                mass={draggedConfigs.configs[idx]?.mass ?? config.mass}
-                damping={draggedConfigs.configs[idx]?.damping ?? config.damping}
-                stiffness={
-                  draggedConfigs.configs[idx]?.stiffness ?? config.stiffness
-                }
-                overshootClamping={config.overshootClamping}
-                index={idx}
-                fixedDurationInFrames={
-                  draggedConfigs.configs[idx]?.durationInFrames ??
-                  config.durationInFrames
-                }
-                reverse={config.reverse}
-                delay={draggedConfigs.configs[idx]?.delay ?? config.delay}
-                calculatedDurationInFrames={calculatedDurationInFrames}
-                onMassChange={onMassChange}
-                onDampingChange={onDampingChange}
-                onDelayChange={onDelayChange}
-                onDurationInFramesChange={onDurationInFramesChange}
-                onStiffnessChange={onStiffnessChange}
-                onRelease={onRelease}
-                onOvershootClampingChange={onOvershootClampingChange}
-                onReverseChange={onReverseChange}
-              />
-            );
-          })}
+          <>
+            {springConfigs.map((config, idx) => {
+              return (
+                <SpringControls
+                  key={idx}
+                  mass={draggedConfigs.configs[idx]?.mass ?? config.mass}
+                  damping={
+                    draggedConfigs.configs[idx]?.damping ?? config.damping
+                  }
+                  stiffness={
+                    draggedConfigs.configs[idx]?.stiffness ?? config.stiffness
+                  }
+                  overshootClamping={config.overshootClamping}
+                  index={idx}
+                  fixedDurationInFrames={
+                    draggedConfigs.configs[idx]?.durationInFrames ??
+                    config.durationInFrames
+                  }
+                  reverse={config.reverse}
+                  delay={draggedConfigs.configs[idx]?.delay ?? config.delay}
+                  calculatedDurationInFrames={calculatedDurationInFrames}
+                  removeSpring={removeSpring}
+                  onMassChange={onMassChange}
+                  onDampingChange={onDampingChange}
+                  onDelayChange={onDelayChange}
+                  onDurationInFramesChange={onDurationInFramesChange}
+                  onStiffnessChange={onStiffnessChange}
+                  onRelease={onRelease}
+                  onOvershootClampingChange={onOvershootClampingChange}
+                  onReverseChange={onReverseChange}
+                />
+              );
+            })}
+            <Spacing y={5} />
+            <Button style={{ width: "100%" }} onClick={addSpring}>
+              Add spring
+            </Button>
+          </>
         </TabsContent>
         <TabsContent value="code">
           <CodeFrameTabs

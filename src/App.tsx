@@ -20,33 +20,43 @@ export type DraggedConfig = {
   configs: (ExtendedSpringConfig | null)[];
 };
 
+const DEFAULT_SPRING = {
+  damping: DEFAULT_DAMPING,
+  mass: DEFAULT_MASS,
+  stiffness: DEFAULT_STIFFNESS,
+  overshootClamping: false,
+  reverse: false,
+  durationInFrames: null,
+  delay: 0,
+};
+
 function App() {
   const [springConfigs, setSpringConfigs] = useState<ExtendedSpringConfig[]>([
-    {
-      damping: DEFAULT_DAMPING,
-      mass: DEFAULT_MASS,
-      stiffness: DEFAULT_STIFFNESS,
-      overshootClamping: false,
-      reverse: false,
-      durationInFrames: null,
-
-      delay: 0,
-    },
-    {
-      damping: DEFAULT_DAMPING,
-      mass: DEFAULT_MASS,
-      stiffness: DEFAULT_STIFFNESS,
-      overshootClamping: false,
-      reverse: false,
-      durationInFrames: null,
-      delay: 0,
-    },
+    DEFAULT_SPRING,
   ]);
 
   const [draggedConfigs, setDraggedConfigs] = useState<DraggedConfig>({
     index: 0,
     configs: Array(springConfigs.length).fill(null),
   });
+
+  const addSpring = useCallback(() => {
+    setSpringConfigs([...springConfigs, DEFAULT_SPRING]);
+    setDraggedConfigs((old) => ({
+      ...old,
+      configs: [...old.configs, null],
+    }));
+    springConfigs.push(DEFAULT_SPRING);
+    draggedConfigs.configs.push(DEFAULT_SPRING);
+  }, [draggedConfigs.configs, springConfigs]);
+
+  const removeSpring = useCallback((index: number) => {
+    setSpringConfigs((old) => [...old.splice(0, index), ...old.splice(index)]);
+    setDraggedConfigs((old) => ({
+      ...old,
+      configs: [...old.configs.splice(0, index), ...old.configs.splice(index)],
+    }));
+  }, []);
 
   const onMassChange = useCallback(
     (e: number[], index: number) => {
@@ -255,6 +265,8 @@ function App() {
           springConfigs={springConfigs}
           draggedConfigs={draggedConfigs}
           calculatedDurationInFrames={duration}
+          addSpring={addSpring}
+          removeSpring={removeSpring}
           onMassChange={onMassChange}
           onDampingChange={onDampingChange}
           onStiffnessChange={onStiffnessChange}
