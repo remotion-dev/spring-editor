@@ -59,7 +59,6 @@ export const drawTrajectory = ({
   let lastDraw = Date.now();
 
   let stopped = false;
-
   const executeDraw = async () => {
     for (let i = 0; i < springTrajectory.length; i++) {
       const timeSinceLastDraw = Date.now() - lastDraw;
@@ -92,7 +91,6 @@ export const drawTrajectory = ({
       context.stroke();
       context.closePath();
       lastDraw = Date.now();
-
       if (animate) {
         (
           document.getElementById("scale") as HTMLElement

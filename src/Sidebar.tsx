@@ -21,6 +21,7 @@ export const Sidebar: React.FC<{
   onRelease: (index: number) => void;
   onOvershootClampingChange: (checked: boolean, index: number) => void;
   onReverseChange: (checked: boolean, index: number) => void;
+  resetSpring: () => void;
 }> = ({
   springConfigs,
   draggedConfigs,
@@ -35,6 +36,7 @@ export const Sidebar: React.FC<{
   onDelayChange,
   addSpring,
   removeSpring,
+  resetSpring,
 }) => {
   return (
     <div
@@ -58,19 +60,37 @@ export const Sidebar: React.FC<{
               return (
                 <SpringControls
                   key={idx}
-                  mass={draggedConfigs.config?.mass ?? config.mass}
-                  damping={draggedConfigs.config?.damping ?? config.damping}
+                  mass={
+                    draggedConfigs.config?.mass && draggedConfigs.index === idx
+                      ? draggedConfigs.config.mass
+                      : config.mass
+                  }
+                  damping={
+                    draggedConfigs.config?.damping &&
+                    draggedConfigs.index === idx
+                      ? draggedConfigs.config.damping
+                      : config.damping
+                  }
                   stiffness={
-                    draggedConfigs.config?.stiffness ?? config.stiffness
+                    draggedConfigs.config?.stiffness &&
+                    draggedConfigs.index === idx
+                      ? draggedConfigs.config.stiffness
+                      : config.stiffness
                   }
                   overshootClamping={config.overshootClamping}
                   index={idx}
                   fixedDurationInFrames={
-                    draggedConfigs.config?.durationInFrames ??
-                    config.durationInFrames
+                    draggedConfigs.config?.durationInFrames &&
+                    draggedConfigs.index === idx
+                      ? draggedConfigs.config.durationInFrames
+                      : config.durationInFrames
                   }
                   reverse={config.reverse}
-                  delay={draggedConfigs.config?.delay ?? config.delay}
+                  delay={
+                    draggedConfigs.config?.delay && draggedConfigs.index === idx
+                      ? draggedConfigs.config.delay
+                      : config.delay
+                  }
                   calculatedDurationInFrames={calculatedDurationInFrames}
                   removeSpring={removeSpring}
                   onMassChange={onMassChange}
@@ -84,10 +104,19 @@ export const Sidebar: React.FC<{
                 />
               );
             })}
-            <Spacing y={5} />
-            <Button style={{ width: "100%" }} onClick={addSpring}>
-              Add spring
-            </Button>
+            <div style={{ display: "flex" }}>
+              <Button
+                style={{ width: "100%" }}
+                variant="outline"
+                onClick={resetSpring}
+              >
+                Reset Springs
+              </Button>
+              <Spacing x={4} />
+              <Button style={{ width: "100%" }} onClick={addSpring}>
+                Add spring
+              </Button>
+            </div>
           </>
         </TabsContent>
         <TabsContent value="code">

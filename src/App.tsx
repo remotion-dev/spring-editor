@@ -53,6 +53,10 @@ function App() {
     setSpringConfigs((old) => [...old.splice(0, index), ...old.splice(index)]);
   }, []);
 
+  const resetSpring = useCallback(() => {
+    setSpringConfigs([DEFAULT_SPRING]);
+  }, []);
+
   const onMassChange = useCallback(
     (e: number[], index: number) => {
       setDraggedConfigs(() => ({
@@ -228,6 +232,7 @@ function App() {
           calculatedDurationInFrames={duration}
           addSpring={addSpring}
           removeSpring={removeSpring}
+          resetSpring={resetSpring}
           onMassChange={onMassChange}
           onDampingChange={onDampingChange}
           onStiffnessChange={onStiffnessChange}
