@@ -38,7 +38,6 @@ export const draw = ({
     return;
   }
 
-  console.log("width: ", width);
   context.clearRect(0, 0, width, height);
   const trajectory = getTrajectory(duration, fps, springConfigs);
 
