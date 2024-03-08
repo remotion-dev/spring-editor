@@ -87,15 +87,27 @@ export const draw = ({
   context.closePath();
 
   for (let i = 1; i <= max + 1; i++) {
-    console.log(max);
     const lHeight =
       (height - PADDING_TOP - PADDING_BOTTOM) * (1 - i / max) + PADDING_TOP;
-    console.log("height for index ", i, ": ", lHeight, height);
     context.beginPath();
-    context.moveTo(PADDING_LEFT, lHeight);
+    context.moveTo(
+      PADDING_LEFT +
+        measureText({
+          fontFamily: "GTPlanar",
+          fontSize: 15,
+          text: i.toString(),
+          fontWeight: "medium",
+          letterSpacing: undefined,
+        }).width +
+        8,
+      lHeight
+    );
     context.lineTo(width - PADDING_RIGHT, lHeight);
     context.stroke();
+    context.fillStyle = "white";
     context.closePath();
+    context.font = "15px GTPlanar";
+    context.fillText(i.toString(), PADDING_LEFT, lHeight + 6);
   }
 
   const toStop: (() => void)[] = [];
