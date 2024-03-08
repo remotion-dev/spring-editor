@@ -7,7 +7,7 @@ import {
   PADDING_TOP,
   drawTrajectory,
 } from "./draw-trajectory";
-import { DraggedConfig } from "./App";
+import { DraggedConfig, ExtendedSpringConfig } from "./App";
 import { measureText } from "@remotion/layout-utils";
 
 export let stopDrawing = () => {};
@@ -16,8 +16,8 @@ export const draw = ({
   ref,
   duration,
   fps,
-  config,
-  draggedConfig,
+  springConfigs,
+  draggedConfigs,
   draggedDuration,
   height,
   width,
@@ -26,26 +26,38 @@ export const draw = ({
   ref: HTMLCanvasElement;
   duration: number;
   fps: number;
-  config: DraggedConfig;
-  draggedConfig: DraggedConfig | null;
+  springConfigs: ExtendedSpringConfig[];
+  draggedConfigs: DraggedConfig;
   draggedDuration: number | null;
   width: number;
   height: number;
   labelText: string;
 }) => {
   const context = ref.getContext("2d");
-
   if (!context) {
     return;
   }
 
   context.clearRect(0, 0, width, height);
-  const trajectory = getTrajectory(duration, fps, config);
-  const draggedTrajectory = draggedConfig
-    ? getTrajectory(draggedDuration ?? duration, fps, draggedConfig)
-    : [];
+  const trajectory = getTrajectory(duration, fps, springConfigs);
 
-  const max = draggedConfig
+  const hasSomeDragged = draggedConfigs.config !== null;
+
+  const currentIdx = draggedConfigs.index;
+  const draggedConfigsToDraw = [
+    ...springConfigs.slice(0, currentIdx),
+    draggedConfigs.config,
+    ...springConfigs.slice(currentIdx + 1),
+  ];
+
+  const draggedTrajectory = hasSomeDragged
+    ? getTrajectory(
+        draggedDuration ?? duration,
+        fps,
+        draggedConfigsToDraw as ExtendedSpringConfig[]
+      )
+    : [];
+  const max = hasSomeDragged
     ? Math.max(...draggedTrajectory)
     : Math.max(...trajectory);
 
@@ -84,20 +96,20 @@ export const draw = ({
   context.closePath();
 
   const toStop: (() => void)[] = [];
-
   const stopPrimary = drawTrajectory({
     springTrajectory: trajectory,
     canvasHeight: height,
     canvasWidth: width,
     context,
     max,
-    primary: !draggedConfig,
-    animate: !draggedConfig,
+    primary: !hasSomeDragged, // Used to be !draggedConfig
+    animate: !hasSomeDragged,
     fps,
   });
+
   toStop.push(stopPrimary);
 
-  if (draggedConfig) {
+  if (hasSomeDragged) {
     toStop.push(
       drawTrajectory({
         springTrajectory: draggedTrajectory,

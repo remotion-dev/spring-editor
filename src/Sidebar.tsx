@@ -1,47 +1,42 @@
 import React from "react";
-import { Slider } from "./components/ui/slider";
-
-import { SliderLabel } from "./SliderLabel";
-import { CheckboxWithLabel } from "./Checkbox";
-import { Spacing } from "./Spacing";
 import { CodeFrameTabs } from "./CodeFrame";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "./components/ui/tabs";
 import { PADDING_LEFT } from "./draw-trajectory";
+import { DraggedConfig, ExtendedSpringConfig } from "./App";
+import { SpringControls } from "./SpringControls";
+import { Button } from "./components/ui/button";
+import { Spacing } from "./Spacing";
 
 export const Sidebar: React.FC<{
-  mass: number;
-  damping: number;
-  stiffness: number;
-  fixedDurationInFrames: number | null;
+  springConfigs: ExtendedSpringConfig[];
+  draggedConfigs: DraggedConfig;
   calculatedDurationInFrames: number;
-  delay: number;
-  onMassChange: (e: [number]) => void;
-  onDampingChange: (e: [number]) => void;
-  onStiffnessChange: (e: [number]) => void;
-  onDurationInFramesChange: (e: number | null) => void;
-  onDelayChange: (e: number) => void;
-  overshootClamping: boolean;
-  onRelease: () => void;
-  onOvershootClampingChange: (checked: boolean) => void;
-  reverse: boolean;
-  onReverseChange: (checked: boolean) => void;
+  addSpring: () => void;
+  removeSpring: (index: number) => void;
+  onMassChange: (e: number[], index: number) => void;
+  onDampingChange: (e: number[], index: number) => void;
+  onStiffnessChange: (e: number[], index: number) => void;
+  onDurationInFramesChange: (e: number | null, index: number) => void;
+  onDelayChange: (e: number, index: number) => void;
+  onRelease: (index: number) => void;
+  onOvershootClampingChange: (checked: boolean, index: number) => void;
+  onReverseChange: (checked: boolean, index: number) => void;
+  resetSpring: () => void;
 }> = ({
-  mass,
+  springConfigs,
+  draggedConfigs,
   onDampingChange,
   onMassChange,
   onStiffnessChange,
   onDurationInFramesChange,
-  fixedDurationInFrames,
-  overshootClamping,
   onRelease,
-  damping,
-  stiffness,
   calculatedDurationInFrames,
   onOvershootClampingChange,
   onReverseChange,
-  reverse,
-  delay,
   onDelayChange,
+  addSpring,
+  removeSpring,
+  resetSpring,
 }) => {
   return (
     <div
@@ -51,6 +46,7 @@ export const Sidebar: React.FC<{
         display: "flex",
         flexDirection: "column",
         borderLeft: "1px solid #242424",
+        overflow: "scroll",
       }}
     >
       <Tabs defaultValue="configuration">
@@ -59,92 +55,88 @@ export const Sidebar: React.FC<{
           <TabsTrigger value="code">Code</TabsTrigger>
         </TabsList>
         <TabsContent value="configuration">
-          <Spacing y={3} />
-          <Slider
-            value={[mass]}
-            min={0.3}
-            step={0.1}
-            max={10}
-            onValueChange={onMassChange}
-            onPointerUp={onRelease}
-          />
-          <SliderLabel label="mass" value={mass} toggleable={null} />
-          <br />
-          <Slider
-            min={1}
-            max={200}
-            value={[damping]}
-            onValueChange={onDampingChange}
-            onPointerUp={onRelease}
-          />
-          <SliderLabel label="damping" value={damping} toggleable={null} />
-          <br />
-          <Slider
-            min={1}
-            max={200}
-            value={[stiffness]}
-            onValueChange={onStiffnessChange}
-            onPointerUp={onRelease}
-          />
-          <SliderLabel toggleable={null} label="stiffness" value={stiffness} />
-          <br />
-          <Slider
-            min={0}
-            max={400}
-            value={[delay]}
-            onValueChange={(val) => {
-              onDelayChange(val[0]);
-            }}
-            onPointerUp={onRelease}
-          />
-          <SliderLabel label="delay" toggleable={null} value={delay} />
-          <br />
           <>
-            <Slider
-              min={1}
-              max={200}
-              value={[fixedDurationInFrames ?? calculatedDurationInFrames]}
-              style={{ opacity: fixedDurationInFrames === null ? 0.5 : 1 }}
-              onValueChange={(val) => {
-                onDurationInFramesChange(val[0]);
-              }}
-              onPointerUp={onRelease}
-            />
-            <SliderLabel
-              label="durationInFrames"
-              toggleable={(enabled) => {
-                if (enabled) {
-                  onDurationInFramesChange(calculatedDurationInFrames);
-                } else {
-                  onDurationInFramesChange(null);
-                }
-              }}
-              value={fixedDurationInFrames ?? null}
-            />
+            {springConfigs.map((config, idx) => {
+              return (
+                <>
+                  <SpringControls
+                    key={idx}
+                    mass={
+                      draggedConfigs.config?.mass &&
+                      draggedConfigs.index === idx
+                        ? draggedConfigs.config.mass
+                        : config.mass
+                    }
+                    damping={
+                      draggedConfigs.config?.damping &&
+                      draggedConfigs.index === idx
+                        ? draggedConfigs.config.damping
+                        : config.damping
+                    }
+                    stiffness={
+                      draggedConfigs.config?.stiffness &&
+                      draggedConfigs.index === idx
+                        ? draggedConfigs.config.stiffness
+                        : config.stiffness
+                    }
+                    overshootClamping={config.overshootClamping}
+                    index={idx}
+                    fixedDurationInFrames={
+                      draggedConfigs.config?.durationInFrames &&
+                      draggedConfigs.index === idx
+                        ? draggedConfigs.config.durationInFrames
+                        : config.durationInFrames
+                    }
+                    reverse={config.reverse}
+                    delay={
+                      draggedConfigs.config?.delay &&
+                      draggedConfigs.index === idx
+                        ? draggedConfigs.config.delay
+                        : config.delay
+                    }
+                    calculatedDurationInFrames={calculatedDurationInFrames}
+                    removeSpring={removeSpring}
+                    onMassChange={onMassChange}
+                    onDampingChange={onDampingChange}
+                    onDelayChange={onDelayChange}
+                    onDurationInFramesChange={onDurationInFramesChange}
+                    onStiffnessChange={onStiffnessChange}
+                    onRelease={onRelease}
+                    onOvershootClampingChange={onOvershootClampingChange}
+                    onReverseChange={onReverseChange}
+                  />
+                  {idx < springConfigs.length - 1 ? (
+                    <div
+                      style={{
+                        textAlign: "center",
+                        fontWeight: "bold",
+                        fontSize: 20,
+                      }}
+                    >
+                      +
+                    </div>
+                  ) : null}
+                </>
+              );
+            })}
+            <div style={{ height: 10 }} />
+            <div style={{ display: "flex" }}>
+              <Button
+                style={{ width: "100%" }}
+                variant="outline"
+                onClick={resetSpring}
+              >
+                Reset Springs
+              </Button>
+              <Spacing x={4} />
+              <Button style={{ width: "100%" }} onClick={addSpring}>
+                Add spring
+              </Button>
+            </div>
           </>
-          <br />
-          <CheckboxWithLabel
-            checked={overshootClamping}
-            id="overshootClamping"
-            onCheckedChange={onOvershootClampingChange}
-          />
-          <CheckboxWithLabel
-            checked={reverse}
-            id="reverse"
-            onCheckedChange={onReverseChange}
-          />
-          <Spacing y={2} />
         </TabsContent>
         <TabsContent value="code">
-          <CodeFrameTabs
-            delay={delay}
-            damping={damping}
-            mass={mass}
-            stiffness={stiffness}
-            overshotClamping={overshootClamping}
-            reverse={reverse}
-            durationInFrames={fixedDurationInFrames}
-          />
+          <CodeFrameTabs springConfigs={springConfigs} />
         </TabsContent>
       </Tabs>
     </div>

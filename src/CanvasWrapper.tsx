@@ -1,17 +1,16 @@
 import { PlayerInternals } from "@remotion/player";
 import { useRef } from "react";
 import { Canvas } from "./Canvas";
-import { DraggedConfig } from "./App";
+import { DraggedConfig, ExtendedSpringConfig } from "./App";
 
 export const CanvasWrapper: React.FC<{
-  draggedConfig: DraggedConfig | null;
+  draggedConfigs: DraggedConfig;
   draggedDuration: number | null;
   duration: number;
-  config: DraggedConfig;
+  springConfigs: ExtendedSpringConfig[];
   fps: number;
-}> = ({ config, draggedConfig, draggedDuration, duration, fps }) => {
+}> = ({ springConfigs, draggedConfigs, draggedDuration, duration, fps }) => {
   const outer = useRef<HTMLDivElement>(null);
-
   const elementSize = PlayerInternals.useElementSize(outer, {
     shouldApplyCssTransforms: false,
     triggerOnWindowResize: true,
@@ -30,8 +29,8 @@ export const CanvasWrapper: React.FC<{
     >
       {elementSize ? (
         <Canvas
-          config={config}
-          draggedConfig={draggedConfig}
+          springConfigs={springConfigs}
+          draggedConfigs={draggedConfigs}
           draggedDuration={draggedDuration}
           duration={duration}
           fps={fps}

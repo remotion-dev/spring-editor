@@ -1,131 +1,193 @@
-import { useCallback, useState } from "react";
+import { useCallback, useEffect, useState } from "react";
 import { measureSpring, SpringConfig } from "remotion";
-import { AnimationPreview } from "./AnimationPreview";
 
 import { Sidebar } from "./Sidebar";
 import { CanvasWrapper } from "./CanvasWrapper";
 import { DEFAULT_DAMPING, DEFAULT_MASS, DEFAULT_STIFFNESS } from "./defaults";
 import { Header } from "./Header";
+import { Ball } from "./Ball";
 
 const fps = 60;
 
-export type DraggedConfig = SpringConfig & {
+export type ExtendedSpringConfig = SpringConfig & {
   reverse: boolean;
   durationInFrames: number | null;
   delay: number;
 };
 
+export type DraggedConfig = {
+  index: number;
+  config: ExtendedSpringConfig | null;
+};
+
+const DEFAULT_SPRING = {
+  damping: DEFAULT_DAMPING,
+  mass: DEFAULT_MASS,
+  stiffness: DEFAULT_STIFFNESS,
+  overshootClamping: false,
+  reverse: false,
+  durationInFrames: null,
+  delay: 0,
+};
+
 function App() {
-  const [config, setConfig] = useState<
-    SpringConfig & {
-      reverse: boolean;
-      durationInFrames: number | null;
-      delay: number;
-    }
-  >({
-    damping: DEFAULT_DAMPING,
-    mass: DEFAULT_MASS,
-    stiffness: DEFAULT_STIFFNESS,
-    overshootClamping: false,
-    reverse: false,
-    durationInFrames: null,
-    delay: 0,
+  const initialConfig = window.localStorage.getItem("springConfigs")
+    ? JSON.parse(window.localStorage.getItem("springConfigs") as string)
+    : [DEFAULT_SPRING];
+  const [springConfigs, setSpringConfigs] =
+    useState<ExtendedSpringConfig[]>(initialConfig);
+
+  const updateLocalStorage = useCallback(() => {
+    window.localStorage.setItem("springConfigs", JSON.stringify(springConfigs));
+  }, [springConfigs]);
+  const [draggedConfigs, setDraggedConfigs] = useState<DraggedConfig>({
+    index: 0,
+    config: null,
   });
 
-  const [draggedConfig, setDraggedConfig] = useState<DraggedConfig | null>(
-    null
-  );
+  const addSpring = useCallback(() => {
+    setSpringConfigs([...springConfigs, DEFAULT_SPRING]);
+  }, [springConfigs]);
+
+  useEffect(() => {
+    updateLocalStorage();
+  }, [springConfigs, updateLocalStorage]);
+
+  const removeSpring = useCallback((index: number) => {
+    setSpringConfigs((old) => [...old.splice(0, index), ...old.splice(index)]);
+  }, []);
+
+  const resetSpring = useCallback(() => {
+    setSpringConfigs([DEFAULT_SPRING]);
+  }, []);
 
   const onMassChange = useCallback(
-    (e: [number]) => {
-      setDraggedConfig({ ...config, mass: e[0] });
+    (e: number[], index: number) => {
+      setDraggedConfigs(() => ({
+        index,
+        config: { ...springConfigs[index], mass: e[0] },
+      }));
     },
-    [config]
+    [springConfigs]
   );
-
   const onDampingChange = useCallback(
-    (e: number[]) => {
-      setDraggedConfig({ ...config, damping: e[0] });
+    (e: number[], index: number) => {
+      setDraggedConfigs(() => ({
+        index,
+        config: {
+          ...springConfigs[index],
+          damping: e[0],
+        },
+      }));
     },
-    [config]
+    [springConfigs]
   );
 
   const onStiffnessChange = useCallback(
-    (e: number[]) => {
-      setDraggedConfig({ ...config, stiffness: e[0] });
+    (e: number[], index: number) => {
+      setDraggedConfigs(() => ({
+        index,
+        config: {
+          ...springConfigs[index],
+          stiffness: e[0],
+        },
+      }));
     },
-    [config]
+    [springConfigs]
   );
 
   const onDurationInFramesChange = useCallback(
-    (e: number | null) => {
-      setDraggedConfig({ ...config, durationInFrames: e });
-      setConfig({ ...config, durationInFrames: e });
+    (e: number | null, index: number) => {
+      setDraggedConfigs(() => ({
+        index,
+        config: {
+          ...springConfigs[index],
+          durationInFrames: e,
+        },
+      }));
+
+      setSpringConfigs((old) => [
+        ...old.slice(0, index),
+        {
+          ...springConfigs[index],
+          durationInFrames: e,
+        },
+        ...old.slice(index + 1),
+      ]);
     },
-    [config]
+
+    [springConfigs]
   );
 
   const onDelayChange = useCallback(
-    (e: number) => {
-      setDraggedConfig({ ...config, delay: e });
-      setConfig({ ...config, delay: e });
+    (e: number, index: number) => {
+      setDraggedConfigs(() => ({
+        index,
+        config: {
+          ...springConfigs[index],
+          delay: e,
+        },
+      }));
+      setSpringConfigs((old) => [
+        ...old.slice(0, index),
+        { ...old[index], delay: e },
+        ...old.slice(index + 1),
+      ]);
     },
-    [config]
+    [springConfigs]
   );
 
   const onOvershootClampingChange = useCallback(
-    (checked: boolean) => {
-      setDraggedConfig({
-        ...config,
-        overshootClamping: checked,
-      });
-      setConfig({
-        ...config,
-        overshootClamping: checked,
-      });
+    (checked: boolean, index: number) => {
+      setSpringConfigs((old) => [
+        ...old.slice(0, index),
+        { ...old[index], overshootClamping: checked },
+        ...old.slice(index + 1),
+      ]);
     },
-    [config]
+    []
   );
 
-  const onReverseChange = useCallback(
-    (checked: boolean) => {
-      setDraggedConfig({
-        ...config,
-        reverse: checked,
-      });
-      setConfig({
-        ...config,
-        reverse: checked,
-      });
+  const onReverseChange = useCallback((checked: boolean, index: number) => {
+    setSpringConfigs((old) => [
+      ...old.slice(0, index),
+      { ...old[index], reverse: checked },
+      ...old.slice(index + 1),
+    ]);
+  }, []);
+
+  const onRelease = useCallback(
+    (index: number) => {
+      if (draggedConfigs && draggedConfigs.config) {
+        setSpringConfigs((old) => [
+          ...old.slice(0, index),
+          draggedConfigs.config as ExtendedSpringConfig,
+          ...old.slice(index + 1),
+        ]);
+      }
+      setDraggedConfigs({ index: 0, config: null });
     },
-    [config]
+    [draggedConfigs]
   );
 
-  const onRelease = useCallback(() => {
-    if (draggedConfig) {
-      setConfig(draggedConfig as DraggedConfig);
-    }
-    setDraggedConfig(null);
-  }, [draggedConfig]);
+  const duration = springConfigs.reduce((max, config) => {
+    const calculatedDuration =
+      config.delay +
+      (config.durationInFrames
+        ? config.durationInFrames
+        : measureSpring({ fps, threshold: 0.001, config }));
+    return calculatedDuration > max ? calculatedDuration : max;
+  }, 0);
 
-  const duration =
-    config.delay +
-    (config.durationInFrames
-      ? config.durationInFrames
-      : measureSpring({
+  const draggedDuration =
+    // eslint-disable-next-line no-negated-condition
+    draggedConfigs.config !== null
+      ? measureSpring({
           fps,
           threshold: 0.001,
-          config,
-        }));
-  const draggedDuration = draggedConfig
-    ? draggedConfig.durationInFrames
-      ? draggedConfig.durationInFrames + draggedConfig.delay
-      : measureSpring({
-          fps,
-          threshold: 0.001,
-          config: draggedConfig,
-        }) + draggedConfig.delay
-    : null;
+          config: draggedConfigs.config,
+        })
+      : null;
 
   return (
     <div
@@ -153,29 +215,25 @@ function App() {
       >
         <div id="canvas">
           <CanvasWrapper
-            config={config}
-            draggedConfig={draggedConfig}
-            draggedDuration={draggedDuration}
+            springConfigs={springConfigs}
+            draggedConfigs={draggedConfigs}
+            draggedDuration={
+              draggedDuration && draggedDuration > 0 ? draggedDuration : null
+            }
             duration={duration}
             fps={fps}
           />
           <div id="animation-preview">
-            <AnimationPreview animation="Scale" id="scale" />
-            <AnimationPreview animation="Translate" id="translate" />
-            <AnimationPreview animation="Rotate" id="rotate" />
+            <Ball />
           </div>
         </div>
         <Sidebar
-          mass={draggedConfig?.mass ?? config.mass}
-          damping={draggedConfig?.damping ?? config.damping}
-          stiffness={draggedConfig?.stiffness ?? config.stiffness}
-          overshootClamping={config.overshootClamping}
-          reverse={config.reverse}
-          fixedDurationInFrames={
-            draggedConfig?.durationInFrames ?? config.durationInFrames
-          }
+          springConfigs={springConfigs}
+          draggedConfigs={draggedConfigs}
           calculatedDurationInFrames={duration}
-          delay={draggedConfig?.delay ?? config.delay}
+          addSpring={addSpring}
+          removeSpring={removeSpring}
+          resetSpring={resetSpring}
           onMassChange={onMassChange}
           onDampingChange={onDampingChange}
           onStiffnessChange={onStiffnessChange}
