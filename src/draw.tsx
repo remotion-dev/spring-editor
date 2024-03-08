@@ -106,7 +106,7 @@ export const draw = ({
     context.stroke();
     context.fillStyle = "white";
     context.closePath();
-    context.font = "15px GTPlanar";
+    context.font = `${15 * window.devicePixelRatio}px GTPlanar`;
     context.fillText(i.toString(), PADDING_LEFT, lHeight + 6);
   }
 

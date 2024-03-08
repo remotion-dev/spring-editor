@@ -6,6 +6,7 @@ import { CanvasWrapper } from "./CanvasWrapper";
 import { DEFAULT_DAMPING, DEFAULT_MASS, DEFAULT_STIFFNESS } from "./defaults";
 import { Header } from "./Header";
 import { Ball } from "./Ball";
+import { getTrajectory } from "./get-trajectory";
 
 const fps = 60;
 
@@ -189,6 +190,7 @@ function App() {
         })
       : null;
 
+  const maxVal = Math.max(...getTrajectory(duration, fps, springConfigs));
   return (
     <div
       style={{
@@ -239,10 +241,43 @@ function App() {
                 paddingRight: 21,
               }}
             >
-              <div>0</div>
               {springConfigs.map((_config, i) => {
-                return <div>{i + 1}</div>;
+                if (i === 0) {
+                  return (
+                    <div
+                      style={{
+                        flex: 1,
+                        display: "flex",
+                        justifyContent: "space-between",
+                      }}
+                    >
+                      <div>0</div>
+                      <div>{i + 1}</div>
+                    </div>
+                  );
+                }
+                return (
+                  <div
+                    style={{
+                      flex: 1,
+                      display: "flex",
+                      justifyContent: "flex-end",
+                      paddingRight: 3,
+                    }}
+                  >
+                    {i + 1}
+                  </div>
+                );
               })}
+              <div
+                style={{
+                  flex: maxVal - springConfigs.length,
+                  display: "flex",
+                  justifyContent: "flex-end",
+                }}
+              >
+                {maxVal.toFixed(2)}
+              </div>
             </div>
           </div>
         </div>

@@ -91,10 +91,9 @@ export const drawTrajectory = ({
       context.stroke();
       context.closePath();
       lastDraw = Date.now();
-      const divisor = Math.round(max);
       if (animate) {
         (document.getElementById("ball") as HTMLElement).style.flex = `${
-          springTrajectory[i] / divisor
+          springTrajectory[i] / max
         }`;
       }
     }
