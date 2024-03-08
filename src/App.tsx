@@ -224,7 +224,26 @@ function App() {
             fps={fps}
           />
           <div id="animation-preview">
-            <Ball />
+            <div style={{ display: "flex", flex: 1 }}>
+              <Ball />
+            </div>
+            <div
+              style={{
+                fontFamily: "GTPlanar ",
+                fontSize: 15,
+                display: "flex",
+                flexDirection: "row",
+                justifyContent: "space-between",
+                paddingBottom: 10,
+                paddingLeft: 21,
+                paddingRight: 21,
+              }}
+            >
+              <div>0</div>
+              {springConfigs.map((_config, i) => {
+                return <div>{i + 1}</div>;
+              })}
+            </div>
           </div>
         </div>
         <Sidebar
