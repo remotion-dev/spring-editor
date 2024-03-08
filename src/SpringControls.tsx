@@ -60,12 +60,18 @@ export const SpringControls: React.FC<{
     </svg>
   );
   return (
-    <>
+    <div
+      style={{
+        border: "2px solid #272729",
+        padding: "10px 20px",
+        borderRadius: 8,
+      }}
+    >
       <div
         style={{
           display: "flex",
           flexDirection: "row",
-          borderBottom: "1px solid grey",
+          borderBottom: "2px solid #272729",
           alignItems: "center",
           justifyContent: "space-between",
         }}
@@ -130,29 +136,27 @@ export const SpringControls: React.FC<{
       />
       <SliderLabel label="delay" toggleable={null} value={delay} />
       <Spacing y={0.5} />
-      <>
-        <Slider
-          min={1}
-          max={200}
-          value={[fixedDurationInFrames ?? calculatedDurationInFrames]}
-          style={{ opacity: fixedDurationInFrames === null ? 0.5 : 1 }}
-          onValueChange={(val) => {
-            onDurationInFramesChange(val[0], index);
-          }}
-          onPointerUp={() => onRelease(index)}
-        />
-        <SliderLabel
-          label="durationInFrames"
-          toggleable={(enabled) => {
-            if (enabled) {
-              onDurationInFramesChange(calculatedDurationInFrames, index);
-            } else {
-              onDurationInFramesChange(null, index);
-            }
-          }}
-          value={fixedDurationInFrames ?? null}
-        />
-      </>
+      <Slider
+        min={1}
+        max={200}
+        value={[fixedDurationInFrames ?? calculatedDurationInFrames]}
+        style={{ opacity: fixedDurationInFrames === null ? 0.5 : 1 }}
+        onValueChange={(val) => {
+          onDurationInFramesChange(val[0], index);
+        }}
+        onPointerUp={() => onRelease(index)}
+      />
+      <SliderLabel
+        label="durationInFrames"
+        toggleable={(enabled) => {
+          if (enabled) {
+            onDurationInFramesChange(calculatedDurationInFrames, index);
+          } else {
+            onDurationInFramesChange(null, index);
+          }
+        }}
+        value={fixedDurationInFrames ?? null}
+      />
       <CheckboxWithLabel
         checked={overshootClamping}
         id="overshootClamping"
@@ -163,7 +167,7 @@ export const SpringControls: React.FC<{
         id="reverse"
         onCheckedChange={(e) => onReverseChange(e, index)}
       />
-      <Spacing y={2} />
-    </>
+      <div style={{ height: 10 }} />
+    </div>
   );
 };

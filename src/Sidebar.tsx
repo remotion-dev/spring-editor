@@ -58,52 +58,68 @@ export const Sidebar: React.FC<{
           <>
             {springConfigs.map((config, idx) => {
               return (
-                <SpringControls
-                  key={idx}
-                  mass={
-                    draggedConfigs.config?.mass && draggedConfigs.index === idx
-                      ? draggedConfigs.config.mass
-                      : config.mass
-                  }
-                  damping={
-                    draggedConfigs.config?.damping &&
-                    draggedConfigs.index === idx
-                      ? draggedConfigs.config.damping
-                      : config.damping
-                  }
-                  stiffness={
-                    draggedConfigs.config?.stiffness &&
-                    draggedConfigs.index === idx
-                      ? draggedConfigs.config.stiffness
-                      : config.stiffness
-                  }
-                  overshootClamping={config.overshootClamping}
-                  index={idx}
-                  fixedDurationInFrames={
-                    draggedConfigs.config?.durationInFrames &&
-                    draggedConfigs.index === idx
-                      ? draggedConfigs.config.durationInFrames
-                      : config.durationInFrames
-                  }
-                  reverse={config.reverse}
-                  delay={
-                    draggedConfigs.config?.delay && draggedConfigs.index === idx
-                      ? draggedConfigs.config.delay
-                      : config.delay
-                  }
-                  calculatedDurationInFrames={calculatedDurationInFrames}
-                  removeSpring={removeSpring}
-                  onMassChange={onMassChange}
-                  onDampingChange={onDampingChange}
-                  onDelayChange={onDelayChange}
-                  onDurationInFramesChange={onDurationInFramesChange}
-                  onStiffnessChange={onStiffnessChange}
-                  onRelease={onRelease}
-                  onOvershootClampingChange={onOvershootClampingChange}
-                  onReverseChange={onReverseChange}
-                />
+                <>
+                  <SpringControls
+                    key={idx}
+                    mass={
+                      draggedConfigs.config?.mass &&
+                      draggedConfigs.index === idx
+                        ? draggedConfigs.config.mass
+                        : config.mass
+                    }
+                    damping={
+                      draggedConfigs.config?.damping &&
+                      draggedConfigs.index === idx
+                        ? draggedConfigs.config.damping
+                        : config.damping
+                    }
+                    stiffness={
+                      draggedConfigs.config?.stiffness &&
+                      draggedConfigs.index === idx
+                        ? draggedConfigs.config.stiffness
+                        : config.stiffness
+                    }
+                    overshootClamping={config.overshootClamping}
+                    index={idx}
+                    fixedDurationInFrames={
+                      draggedConfigs.config?.durationInFrames &&
+                      draggedConfigs.index === idx
+                        ? draggedConfigs.config.durationInFrames
+                        : config.durationInFrames
+                    }
+                    reverse={config.reverse}
+                    delay={
+                      draggedConfigs.config?.delay &&
+                      draggedConfigs.index === idx
+                        ? draggedConfigs.config.delay
+                        : config.delay
+                    }
+                    calculatedDurationInFrames={calculatedDurationInFrames}
+                    removeSpring={removeSpring}
+                    onMassChange={onMassChange}
+                    onDampingChange={onDampingChange}
+                    onDelayChange={onDelayChange}
+                    onDurationInFramesChange={onDurationInFramesChange}
+                    onStiffnessChange={onStiffnessChange}
+                    onRelease={onRelease}
+                    onOvershootClampingChange={onOvershootClampingChange}
+                    onReverseChange={onReverseChange}
+                  />
+                  {idx < springConfigs.length - 1 ? (
+                    <div
+                      style={{
+                        textAlign: "center",
+                        fontWeight: "bold",
+                        fontSize: 20,
+                      }}
+                    >
+                      +
+                    </div>
+                  ) : null}
+                </>
               );
             })}
+            <div style={{ height: 10 }} />
             <div style={{ display: "flex" }}>
               <Button
                 style={{ width: "100%" }}
