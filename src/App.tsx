@@ -1,11 +1,11 @@
 import { useCallback, useEffect, useState } from "react";
 import { measureSpring, SpringConfig } from "remotion";
-import { AnimationPreview } from "./AnimationPreview";
 
 import { Sidebar } from "./Sidebar";
 import { CanvasWrapper } from "./CanvasWrapper";
 import { DEFAULT_DAMPING, DEFAULT_MASS, DEFAULT_STIFFNESS } from "./defaults";
 import { Header } from "./Header";
+import { Ball } from "./Ball";
 
 const fps = 60;
 
@@ -224,9 +224,7 @@ function App() {
             fps={fps}
           />
           <div id="animation-preview">
-            <AnimationPreview animation="Scale" id="scale" />
-            <AnimationPreview animation="Translate" id="translate" />
-            <AnimationPreview animation="Rotate" id="rotate" />
+            <Ball />
           </div>
         </div>
         <Sidebar

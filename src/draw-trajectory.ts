@@ -93,23 +93,9 @@ export const drawTrajectory = ({
       lastDraw = Date.now();
       const divisor = Math.round(max);
       if (animate) {
-        (
-          document.getElementById("scale") as HTMLElement
-        ).style.transform = `scale(${springTrajectory[i] / divisor})`;
-        (
-          document.getElementById("translate") as HTMLElement
-        ).style.transform = `translateY(${interpolate(
-          springTrajectory[i] / divisor,
-          [0, 1],
-          [100, 0]
-        )}px)`;
-        (
-          document.getElementById("rotate") as HTMLElement
-        ).style.transform = `rotate(${interpolate(
-          springTrajectory[i] / divisor,
-          [0, 1],
-          [Math.PI * 2, 0]
-        )}rad)`;
+        (document.getElementById("ball") as HTMLElement).style.flex = `${
+          springTrajectory[i] / divisor
+        }`;
       }
     }
   };
