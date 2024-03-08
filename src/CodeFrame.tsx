@@ -50,6 +50,16 @@ const CodeFrame: React.FC<{
 
       allLines.push(lines);
     });
+    const additionLine = [`const spr =`];
+    springConfigs.forEach((config, index) => {
+      if (index < springConfigs.length - 1) {
+        additionLine.push(`spr${index + 1} +`);
+      } else {
+        additionLine.push(`spr${index + 1};`);
+      }
+    });
+    const joined = additionLine.join(" ");
+    allLines.push(joined);
 
     return allLines.join("\n\n");
   }, [springConfigs, platform]);
@@ -79,6 +89,7 @@ const CodeFrame: React.FC<{
           backgroundColor: "#24292E",
           paddingTop: 14,
           paddingLeft: 20,
+          paddingBottom: 14,
           borderRadius: 8,
         }}
       >

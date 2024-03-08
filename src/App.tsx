@@ -38,7 +38,6 @@ function App() {
     useState<ExtendedSpringConfig[]>(initialConfig);
 
   const updateLocalStorage = useCallback(() => {
-    console.log("persisting to local storage: ", springConfigs);
     window.localStorage.setItem("springConfigs", JSON.stringify(springConfigs));
   }, [springConfigs]);
   const [draggedConfigs, setDraggedConfigs] = useState<DraggedConfig>({
