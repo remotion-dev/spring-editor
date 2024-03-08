@@ -1,4 +1,4 @@
-import { interpolate, interpolateColors } from "remotion";
+import { interpolateColors } from "remotion";
 
 const gradient = ["#42e9f5", "#4290f5"] as const;
 
@@ -59,7 +59,6 @@ export const drawTrajectory = ({
   let lastDraw = Date.now();
 
   let stopped = false;
-
   const executeDraw = async () => {
     for (let i = 0; i < springTrajectory.length; i++) {
       const timeSinceLastDraw = Date.now() - lastDraw;
@@ -92,25 +91,10 @@ export const drawTrajectory = ({
       context.stroke();
       context.closePath();
       lastDraw = Date.now();
-
       if (animate) {
-        (
-          document.getElementById("scale") as HTMLElement
-        ).style.transform = `scale(${springTrajectory[i]})`;
-        (
-          document.getElementById("translate") as HTMLElement
-        ).style.transform = `translateY(${interpolate(
-          springTrajectory[i],
-          [0, 1],
-          [100, 0]
-        )}px)`;
-        (
-          document.getElementById("rotate") as HTMLElement
-        ).style.transform = `rotate(${interpolate(
-          springTrajectory[i],
-          [0, 1],
-          [Math.PI * 2, 0]
-        )}rad)`;
+        (document.getElementById("ball") as HTMLElement).style.flex = `${
+          springTrajectory[i] / max
+        }`;
       }
     }
   };

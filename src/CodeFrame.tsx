@@ -6,74 +6,63 @@ import { Button } from "./components/ui/button";
 import { Spacing } from "./Spacing";
 import { copyText } from "./copy-text";
 import toast, { Toaster } from "react-hot-toast";
+import { ExtendedSpringConfig } from "./App";
 
-type Props = {
-  damping: number;
-  mass: number;
-  stiffness: number;
-  // eslint-disable-next-line react/boolean-prop-naming
-  overshotClamping: boolean;
-  // eslint-disable-next-line react/boolean-prop-naming
-  reverse: boolean;
-  durationInFrames: number | null;
-  delay: number;
-};
-
-const CodeFrame: React.FC<
-  Props & {
-    platform: "remotion" | "reanimated";
-  }
-> = ({
-  damping,
-  mass,
-  stiffness,
-  overshotClamping,
-  reverse,
-  platform,
-  durationInFrames,
-  delay,
-}) => {
+const CodeFrame: React.FC<{
+  springConfigs: ExtendedSpringConfig[];
+  platform: "remotion" | "reanimated";
+}> = ({ springConfigs, platform }) => {
   const [h, setH] = useState<string | null>(null);
 
   const code = useMemo(() => {
-    const isDefaultDamping = DEFAULT_DAMPING === damping;
-    const isDefaultMass = DEFAULT_MASS === mass;
-    const isDefaultStiffness = DEFAULT_STIFFNESS === stiffness;
+    const allLines: string[] = [];
 
-    const isAllDefault =
-      isDefaultDamping && isDefaultMass && isDefaultStiffness;
+    springConfigs.forEach((config, index) => {
+      const isDefaultDamping = DEFAULT_DAMPING === config.damping;
+      const isDefaultMass = DEFAULT_MASS === config.mass;
+      const isDefaultStiffness = DEFAULT_STIFFNESS === config.stiffness;
 
-    const lines = [
-      "const spr = spring({",
-      platform === "remotion" ? "  frame," : null,
-      platform === "remotion" ? "  fps," : null,
-      platform === "reanimated" ? "  toValue: 1," : null,
-      isAllDefault ? null : "  config: {",
-      isDefaultDamping ? null : `    damping: ${damping}`,
-      isDefaultMass ? null : `    mass: ${mass}`,
-      isDefaultStiffness ? null : `    stiffness: ${stiffness}`,
-      isAllDefault ? null : "  },",
-      durationInFrames === null || platform === "reanimated"
-        ? null
-        : `  durationInFrames: ${durationInFrames},`,
-      delay === 0 || platform === "reanimated" ? 0 : `  delay: ${delay},`,
-      overshotClamping ? "  overshootClamping: true," : null,
-      reverse ? "  reverse: true," : null,
-      "});",
-    ]
-      .filter(Boolean)
-      .join("\n");
-    return lines;
-  }, [
-    damping,
-    mass,
-    stiffness,
-    platform,
-    durationInFrames,
-    delay,
-    overshotClamping,
-    reverse,
-  ]);
+      const isAllDefault =
+        isDefaultDamping && isDefaultMass && isDefaultStiffness;
+
+      const lines = [
+        `const spr${index + 1} = spring({`,
+        platform === "remotion" ? "  frame," : null,
+        platform === "remotion" ? "  fps," : null,
+        platform === "reanimated" ? "  toValue: 1," : null,
+        isAllDefault ? null : "  config: {",
+        isDefaultDamping ? null : `    damping: ${config.damping}`,
+        isDefaultMass ? null : `    mass: ${config.mass}`,
+        isDefaultStiffness ? null : `    stiffness: ${config.stiffness}`,
+        isAllDefault ? null : "  },",
+        config.durationInFrames === null || platform === "reanimated"
+          ? null
+          : `  durationInFrames: ${config.durationInFrames},`,
+        config.delay === 0 || platform === "reanimated"
+          ? 0
+          : `  delay: ${config.delay},`,
+        config.overshootClamping ? "  overshootClamping: true," : null,
+        config.reverse ? "  reverse: true," : null,
+        "});",
+      ]
+        .filter(Boolean)
+        .join("\n");
+
+      allLines.push(lines);
+    });
+    const additionLine = [`const spr =`];
+    springConfigs.forEach((config, index) => {
+      if (index < springConfigs.length - 1) {
+        additionLine.push(`spr${index + 1} +`);
+      } else {
+        additionLine.push(`spr${index + 1};`);
+      }
+    });
+    const joined = additionLine.join(" ");
+    allLines.push(joined);
+
+    return allLines.join("\n\n");
+  }, [springConfigs, platform]);
 
   useEffect(() => {
     codeToHtml(code, {
@@ -100,7 +89,7 @@ const CodeFrame: React.FC<
           backgroundColor: "#24292E",
           paddingTop: 14,
           paddingLeft: 20,
-          height: 300,
+          paddingBottom: 14,
           borderRadius: 8,
         }}
       >
@@ -120,7 +109,9 @@ const CodeFrame: React.FC<
   );
 };
 
-export function CodeFrameTabs(props: Props) {
+export function CodeFrameTabs(props: {
+  springConfigs: ExtendedSpringConfig[];
+}) {
   return (
     <Tabs defaultValue="remotion">
       <TabsList className="grid w-full grid-cols-2">
@@ -128,10 +119,10 @@ export function CodeFrameTabs(props: Props) {
         <TabsTrigger value="reanimated">Reanimated</TabsTrigger>
       </TabsList>
       <TabsContent value="remotion">
-        <CodeFrame platform="remotion" {...props} />
+        <CodeFrame platform="remotion" springConfigs={props.springConfigs} />
       </TabsContent>
       <TabsContent value="reanimated">
-        <CodeFrame platform="reanimated" {...props} />
+        <CodeFrame platform="reanimated" springConfigs={props.springConfigs} />
       </TabsContent>
     </Tabs>
   );
