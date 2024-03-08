@@ -1,4 +1,4 @@
-import { interpolate, interpolateColors } from "remotion";
+import { interpolateColors } from "remotion";
 
 const gradient = ["#42e9f5", "#4290f5"] as const;
 

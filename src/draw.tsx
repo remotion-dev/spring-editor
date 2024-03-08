@@ -86,14 +86,17 @@ export const draw = ({
   context.stroke();
   context.closePath();
 
-  // Draw 1 line
-  const oneHeight =
-    (height - PADDING_TOP - PADDING_BOTTOM) * (1 - 1 / max) + PADDING_TOP;
-  context.beginPath();
-  context.moveTo(PADDING_LEFT, oneHeight);
-  context.lineTo(width - PADDING_RIGHT, oneHeight);
-  context.stroke();
-  context.closePath();
+  for (let i = 1; i <= max + 1; i++) {
+    console.log(max);
+    const lHeight =
+      (height - PADDING_TOP - PADDING_BOTTOM) * (1 - i / max) + PADDING_TOP;
+    console.log("height for index ", i, ": ", lHeight, height);
+    context.beginPath();
+    context.moveTo(PADDING_LEFT, lHeight);
+    context.lineTo(width - PADDING_RIGHT, lHeight);
+    context.stroke();
+    context.closePath();
+  }
 
   const toStop: (() => void)[] = [];
   const stopPrimary = drawTrajectory({
