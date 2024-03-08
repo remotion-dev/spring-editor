@@ -1,4 +1,4 @@
-import { useCallback, useState } from "react";
+import { useCallback, useEffect, useState } from "react";
 import { measureSpring, SpringConfig } from "remotion";
 import { AnimationPreview } from "./AnimationPreview";
 
@@ -38,6 +38,7 @@ function App() {
     useState<ExtendedSpringConfig[]>(initialConfig);
 
   const updateLocalStorage = useCallback(() => {
+    console.log("persisting to local storage: ", springConfigs);
     window.localStorage.setItem("springConfigs", JSON.stringify(springConfigs));
   }, [springConfigs]);
   const [draggedConfigs, setDraggedConfigs] = useState<DraggedConfig>({
@@ -48,6 +49,10 @@ function App() {
   const addSpring = useCallback(() => {
     setSpringConfigs([...springConfigs, DEFAULT_SPRING]);
   }, [springConfigs]);
+
+  useEffect(() => {
+    updateLocalStorage();
+  }, [springConfigs, updateLocalStorage]);
 
   const removeSpring = useCallback((index: number) => {
     setSpringConfigs((old) => [...old.splice(0, index), ...old.splice(index)]);
@@ -162,9 +167,8 @@ function App() {
         ]);
       }
       setDraggedConfigs({ index: 0, config: null });
-      updateLocalStorage();
     },
-    [draggedConfigs, updateLocalStorage]
+    [draggedConfigs]
   );
 
   const duration = springConfigs.reduce((max, config) => {
