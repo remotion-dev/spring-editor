@@ -49,9 +49,9 @@ const CodeFrame: React.FC<
       platform === "remotion" ? "  fps," : null,
       platform === "reanimated" ? "  toValue: 1," : null,
       isAllDefault ? null : "  config: {",
-      isDefaultDamping ? null : `    damping: ${damping}`,
-      isDefaultMass ? null : `    mass: ${mass}`,
-      isDefaultStiffness ? null : `    stiffness: ${stiffness}`,
+      isDefaultDamping ? null : `    damping: ${damping},`,
+      isDefaultMass ? null : `    mass: ${mass},`,
+      isDefaultStiffness ? null : `    stiffness: ${stiffness},`,
       isAllDefault ? null : "  },",
       durationInFrames === null || platform === "reanimated"
         ? null
