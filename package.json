@@ -11,6 +11,7 @@
     "@remotion/eslint-config": "4.0.54",
     "@remotion/layout-utils": "^4.0.56",
     "@remotion/player": "4.0.54",
+    "@tailwindcss/postcss": "^4.1.10",
     "@types/node": "^20.0.0",
     "@types/react": "18.2.31",
     "@types/react-dom": "18.2.14",
@@ -27,8 +28,7 @@
     "remotion": "4.0.54",
     "shikiji": "^0.6.10",
     "tailwind-merge": "^1.14.0",
-    "tailwindcss": "^3.3.3",
-    "tailwindcss-animate": "^1.0.7",
+    "tailwindcss": "^4.1.10",
     "typescript": "5.2.2",
     "vite": "^6.3.5"
   },
